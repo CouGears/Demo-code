@@ -1,0 +1,101 @@
+package org.firstinspires.ftc.teamcode;
+
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import com.qualcomm.robotcore.hardware.Gyroscope;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.Blinker;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+@TeleOp
+
+public class MyFIRSTJavaOpMode extends LinearOpMode {
+    private Gyroscope imu;
+    private DcMotor motorLeft;
+    private DcMotor motorRight;
+    private DigitalChannel digitalTouch;
+    private Blinker expansion_Hub_2;
+    private DistanceSensor sensorColorRange;
+    private Servo servoTest;
+
+
+    @Override
+    public void runOpMode() {
+        imu = hardwareMap.get(Gyroscope.class, "imu");
+        motorRight = hardwareMap.get(DcMotor.class, "motorRight");
+        motorLeft = hardwareMap.get(DcMotor.class, "motorLeft");
+        digitalTouch = hardwareMap.get(DigitalChannel.class, "digitalTouch");
+        expansion_Hub_2 = hardwareMap.get(Blinker.class, "Expansion Hub 2");
+        sensorColorRange = hardwareMap.get(DistanceSensor.class, "sensorColorRange");
+        servoTest = hardwareMap.get(Servo.class, "servoTest");
+        
+        // set digital channel to input mode.
+        digitalTouch.setMode(DigitalChannel.Mode.INPUT);
+        telemetry.addData("Status", "Initialized");
+        telemetry.update();
+        
+        // Wait for the game to start (driver presses PLAY)
+        waitForStart();
+
+        // run until the end of the match (driver presses STOP)
+        double tgtPower = 0;
+        double tgtPower2 = 0;
+        double servoPos = 0;
+        while (opModeIsActive()) {
+            tgtPower = ((this.gamepad1.left_stick_y)/2)+((-this.gamepad1.left_stick_x)/2);
+            tgtPower2 = -((this.gamepad1.left_stick_y)/2)+((-this.gamepad1.left_stick_x)/2);
+            if (tgtPower > .5) {
+                tgtPower = .5;
+            }
+            else if (tgtPower < -.5) {
+                tgtPower = -.5;
+            }
+            if (tgtPower2 > .5) {
+                tgtPower2 = .5;
+            }
+            else if (tgtPower2 < -.5) {
+                tgtPower2 = -.5;
+            }
+            motorRight.setPower(tgtPower);
+            motorLeft.setPower(tgtPower2);
+            // check to see if we need to move the servo.
+            if(gamepad2.y) {
+                // move to 0 degrees.
+                servoTest.setPosition(0);
+            } 
+            else if (gamepad2.x || gamepad2.b) {
+                // move to 90 degrees.
+                servoTest.setPosition(0.5);
+            }
+            else if (gamepad2.a) {
+                // move to 180 degrees.
+                servoTest.setPosition(1);
+            }
+            servoPos = ((this.gamepad2.left_stick_y)/2) + 0.5;
+            servoTest.setPosition(servoPos);
+            telemetry.addData("Servo Position", servoTest.getPosition());
+            telemetry.addData("Target R Power", tgtPower2);
+            telemetry.addData("Target L Power", tgtPower);
+            telemetry.addData("Motor R Power", motorRight.getPower());
+            telemetry.addData("Motor L Power", motorLeft.getPower());
+            telemetry.addData("Distance CM", sensorColorRange.getDistance(DistanceUnit.CM));
+            // is button pressed?
+            if (digitalTouch.getState() == false) {
+                // button is pressed.
+                telemetry.addData("Button", "PRESSED");
+            } 
+            else {
+                // button is not pressed.
+                telemetry.addData("Button", "NOT PRESSED");
+            }
+            telemetry.addData("Status", "Running");
+            telemetry.update();
+        }
+    }
+}
