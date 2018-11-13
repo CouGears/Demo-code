@@ -59,11 +59,11 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
         double tgtPower2 = 0;
         double servoPos = 0;
         while (opModeIsActive()) {
-            tgtPower = (-this.gamepad1.left_stick_y)/2;
+            tgtPower = (-this.gamepad1.right_stick_y)/2;
             motorLeft.setPower(tgtPower);
             //dock 0 on the hub
             
-            tgtPower2 = (this.gamepad1.right_stick_y)/2;
+            tgtPower2 = (this.gamepad1.left_stick_y)/2;
             motorRight.setPower(tgtPower2);
             //dock 1 on the hub
             
@@ -80,7 +80,7 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
                 // move to 180 degrees.
                 servoTest.setPosition(1);
             }
-            servoPos = ((-this.gamepad1.right_stick_y)/2) + 0.5;
+            servoPos = ((this.gamepad1.right_stick_y)/2) + 0.5;
             servoTest.setPosition(servoPos);
             telemetry.addData("Servo Position", servoTest.getPosition());
             telemetry.addData("Target R Power", tgtPower2);
