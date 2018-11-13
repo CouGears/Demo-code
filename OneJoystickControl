@@ -48,8 +48,8 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
         double tgtPower2 = 0;
         double servoPos = 0;
         while (opModeIsActive()) {
-            tgtPower = ((this.gamepad1.left_stick_y)/2)+((-this.gamepad1.left_stick_x)/2);
-            tgtPower2 = -((this.gamepad1.left_stick_y)/2)+((-this.gamepad1.left_stick_x)/2);
+            tgtPower = ((this.gamepad1.left_stick_y)/2)+((-this.gamepad1.right_stick_x)/2);
+            tgtPower2 = -((this.gamepad1.left_stick_y)/2)+((-this.gamepad1.right_stick_x)/2);
             if (tgtPower > .5) {
                 tgtPower = .5;
             }
