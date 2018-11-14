@@ -47,10 +47,9 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
         double tgtPower = 0;
         double tgtPower2 = 0;
         double servoPos = 0;
-        
+        int x = 0;
         
         while (opModeIsActive()) {
-        int x = 0;
             if(gamepad1.a){
                 x = 0;
             }
