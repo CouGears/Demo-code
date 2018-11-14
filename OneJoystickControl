@@ -59,18 +59,25 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
             if(gamepad1.x){
                 x = 2;
             }
+            if(gamepad1.y){
+                x = 3;
+            }
             
             if(x == 0){ 
                 tgtPower = ((this.gamepad1.left_stick_y)/2)+((-this.gamepad1.right_stick_x)/2);
                 tgtPower2 = -((this.gamepad1.left_stick_y)/2)+((-this.gamepad1.right_stick_x)/2);
             }
             if(x == 1){ 
-                tgtPower = ((this.gamepad1.left_stick_y)/2)+((-this.gamepad1.right_stick_x)/5);
-                tgtPower2 = -((this.gamepad1.left_stick_y)/2)+((-this.gamepad1.right_stick_x)/5);
+                tgtPower = ((this.gamepad1.left_stick_y)/5)+((-this.gamepad1.right_stick_x)/5);
+                tgtPower2 = -((this.gamepad1.left_stick_y)/5)+((-this.gamepad1.right_stick_x)/5);
             }
             if(x == 2){ 
-                tgtPower = ((this.gamepad1.left_stick_y)/2)+((-this.gamepad1.right_stick_x)/10);
-                tgtPower2 = -((this.gamepad1.left_stick_y)/2)+((-this.gamepad1.right_stick_x)/10);
+                tgtPower = ((this.gamepad1.left_stick_y)/10)+((-this.gamepad1.right_stick_x)/10);
+                tgtPower2 = -((this.gamepad1.left_stick_y)/10)+((-this.gamepad1.right_stick_x)/10);
+            }
+            if(x == 3){ 
+                tgtPower = ((this.gamepad1.left_stick_y))+((-this.gamepad1.right_stick_x));
+                tgtPower2 = -((this.gamepad1.left_stick_y))+((-this.gamepad1.right_stick_x));
             }
             
             
