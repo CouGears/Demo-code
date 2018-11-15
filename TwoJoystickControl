@@ -16,25 +16,26 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @TeleOp
 
 public class MyFIRSTJavaOpMode extends LinearOpMode {
-    private Gyroscope imu;
     private DcMotor motorLeft;
     private DcMotor motorRight;
+    private DcMotor motorArm;
     private DigitalChannel digitalTouch;
     private Blinker expansion_Hub_2;
     private DistanceSensor sensorColorRange;
-    private Servo servoTest;
+    private Servo servo1;
+    private Servo servo2;
 
 
     @Override
     public void runOpMode() {
-        imu = hardwareMap.get(Gyroscope.class, "imu");
         motorRight = hardwareMap.get(DcMotor.class, "motorRight");
         motorLeft = hardwareMap.get(DcMotor.class, "motorLeft");
+        motorArm = hardwareMap.get(DcMotor.class, "motorArm");
         digitalTouch = hardwareMap.get(DigitalChannel.class, "digitalTouch");
         expansion_Hub_2 = hardwareMap.get(Blinker.class, "Expansion Hub 2");
         sensorColorRange = hardwareMap.get(DistanceSensor.class, "sensorColorRange");
-        servoTest = hardwareMap.get(Servo.class, "servoTest");
-        
+        servo1 = hardwareMap.get(Servo.class, "servo1");
+        servo2 = hardwareMap.get(Servo.class, "servo2");
         // set digital channel to input mode.
         digitalTouch.setMode(DigitalChannel.Mode.INPUT);
         telemetry.addData("Status", "Initialized");
@@ -46,7 +47,10 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         double tgtPower = 0;
         double tgtPower2 = 0;
-        double servoPos = 0;
+        double tgtPowerArm = 0;
+        double servoPos1 = 0;
+        double servoPos2 = 0;
+        
         int x = 0;
         
         while (opModeIsActive()) {
@@ -64,20 +68,20 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
             }
             
             if(x == 0){ 
-                tgtPower = ((this.gamepad1.left_stick_y)/2)+((-this.gamepad1.right_stick_x)/2);
-                tgtPower2 = -((this.gamepad1.left_stick_y)/2)+((-this.gamepad1.right_stick_x)/2);
+                tgtPower = ((-this.gamepad1.left_stick_y)/2)+((-this.gamepad1.right_stick_x)/2);
+                tgtPower2 = -((-this.gamepad1.left_stick_y)/2)+((-this.gamepad1.right_stick_x)/2);
             }
             if(x == 1){ 
-                tgtPower = ((this.gamepad1.left_stick_y)/5)+((-this.gamepad1.right_stick_x)/5);
-                tgtPower2 = -((this.gamepad1.left_stick_y)/5)+((-this.gamepad1.right_stick_x)/5);
+                tgtPower = ((-this.gamepad1.left_stick_y)/5)+((-this.gamepad1.right_stick_x)/5);
+                tgtPower2 = -((-this.gamepad1.left_stick_y)/5)+((-this.gamepad1.right_stick_x)/5);
             }
             if(x == 2){ 
-                tgtPower = ((this.gamepad1.left_stick_y)/10)+((-this.gamepad1.right_stick_x)/10);
-                tgtPower2 = -((this.gamepad1.left_stick_y)/10)+((-this.gamepad1.right_stick_x)/10);
+                tgtPower = ((-this.gamepad1.left_stick_y)/10)+((-this.gamepad1.right_stick_x)/10);
+                tgtPower2 = -((-this.gamepad1.left_stick_y)/10)+((-this.gamepad1.right_stick_x)/10);
             }
             if(x == 3){ 
-                tgtPower = ((this.gamepad1.left_stick_y))+((-this.gamepad1.right_stick_x));
-                tgtPower2 = -((this.gamepad1.left_stick_y))+((-this.gamepad1.right_stick_x));
+                tgtPower = ((-this.gamepad1.left_stick_y)/15)+((-this.gamepad1.right_stick_x)/15);
+                tgtPower2 = -((-this.gamepad1.left_stick_y)/15)+((-this.gamepad1.right_stick_x)/15);
             }
             
             
@@ -95,8 +99,10 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
             }
             motorRight.setPower(tgtPower);
             motorLeft.setPower(tgtPower2);
+            
+            
             // check to see if we need to move the servo.
-            if(gamepad2.y) {
+           /* if(gamepad2.y) {
                 // move to 0 degrees.
                 servoTest.setPosition(0);
             } 
@@ -108,9 +114,28 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
                 // move to 180 degrees.
                 servoTest.setPosition(1);
             }
-            servoPos = ((this.gamepad2.left_stick_y)/2) + 0.5;
-            servoTest.setPosition(servoPos);
-            telemetry.addData("Servo Position", servoTest.getPosition());
+           */ 
+            
+            //Arm
+            
+            if(gamepad2.right_trigger > 0){
+                tgtPowerArm = 0.15;
+            }
+            else if(gamepad2.left_trigger > 0){
+                tgtPowerArm = -0.15;
+            }
+            else {
+                tgtPowerArm = 0;
+            }
+            
+            servoPos1 = ((-this.gamepad2.left_stick_y)/2) + 0.5;
+            servoPos2 = ((this.gamepad2.right_stick_y)/2) + 0.5;
+            servo1.setPosition(servoPos1);
+            servo2.setPosition(servoPos2);
+            
+            motorArm.setPower(tgtPowerArm);
+            telemetry.addData("Servo Position 1", servo1.getPosition());
+            telemetry.addData("Servo Position 2", servo2.getPosition());
             telemetry.addData("Target R Power", tgtPower2);
             telemetry.addData("Target L Power", tgtPower);
             telemetry.addData("Motor R Power", motorRight.getPower());
