@@ -1,0 +1,62 @@
+package org.firstinspires.ftc.teamcode;
+
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import java.util.Timer;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import com.qualcomm.robotcore.hardware.Gyroscope;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.Blinker;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+@TeleOp
+
+public class MyFIRSTJavaOpMode extends LinearOpMode {
+    
+    private DcMotor motorLeft;
+    private DcMotor motorRight;
+    private DcMotor motorArm;
+    private DcMotor motorTop;
+    private DigitalChannel digitalTouch;
+    private Blinker expansion_Hub_2;
+    //private DistanceSensor sensorColorRange;
+    private Servo servo1;
+
+
+    @Override
+    public void runOpMode() {
+        motorRight = hardwareMap.get(DcMotor.class, "motorRight");
+        motorLeft = hardwareMap.get(DcMotor.class, "motorLeft");
+        motorArm = hardwareMap.get(DcMotor.class, "motorArm");
+        motorTop = hardwareMap.get(DcMotor.class, "motorTop");
+        digitalTouch = hardwareMap.get(DigitalChannel.class, "digitalTouch");
+        expansion_Hub_2 = hardwareMap.get(Blinker.class, "Expansion Hub 2");
+        //sensorColorRange = hardwareMap.get(DistanceSensor.class, "sensorColorRange");
+        servo1 = hardwareMap.get(Servo.class, "servo1");
+        // set digital channel to input mode.
+        digitalTouch.setMode(DigitalChannel.Mode.INPUT);
+        telemetry.addData("Status", "Initialized");
+        telemetry.update();
+        
+        // Wait for the game to start (driver presses PLAY)
+        waitForStart();
+        
+        motorLeft.setPower(1.0);
+        motorRight.setPower(1.0);
+        //Timer.wait(1000L);
+        try {
+            Thread.sleep(1000L);
+        } 
+        catch (InterruptedException e) {
+            
+        }
+        motorLeft.setPower(0.0);
+        motorRight.setPower(0.0);
+        
+    }
+}
