@@ -19,11 +19,11 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
     private DcMotor motorLeft;
     private DcMotor motorRight;
     private DcMotor motorArm;
+    private DcMotor motorTop;
     private DigitalChannel digitalTouch;
     private Blinker expansion_Hub_2;
     private DistanceSensor sensorColorRange;
     private Servo servo1;
-    private Servo servo2;
 
 
     @Override
@@ -31,11 +31,11 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
         motorRight = hardwareMap.get(DcMotor.class, "motorRight");
         motorLeft = hardwareMap.get(DcMotor.class, "motorLeft");
         motorArm = hardwareMap.get(DcMotor.class, "motorArm");
+        motorTop = hardwareMap.get(DcMotor.class, "motorTop");
         digitalTouch = hardwareMap.get(DigitalChannel.class, "digitalTouch");
         expansion_Hub_2 = hardwareMap.get(Blinker.class, "Expansion Hub 2");
         sensorColorRange = hardwareMap.get(DistanceSensor.class, "sensorColorRange");
         servo1 = hardwareMap.get(Servo.class, "servo1");
-        servo2 = hardwareMap.get(Servo.class, "servo2");
         // set digital channel to input mode.
         digitalTouch.setMode(DigitalChannel.Mode.INPUT);
         telemetry.addData("Status", "Initialized");
@@ -47,9 +47,9 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         double tgtPower = 0;
         double tgtPower2 = 0;
-        double tgtPowerArm = 0;
+        double tgtPowerArmBase = 0;
+        double tgtPowerArmTop = 0;
         double servoPos1 = 0;
-        double servoPos2 = 0;
         
         int x = 0;
         
@@ -100,42 +100,25 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
             motorRight.setPower(tgtPower);
             motorLeft.setPower(tgtPower2);
             
-            
-            // check to see if we need to move the servo.
-           /* if(gamepad2.y) {
-                // move to 0 degrees.
-                servoTest.setPosition(0);
-            } 
-            else if (gamepad2.x || gamepad2.b) {
-                // move to 90 degrees.
-                servoTest.setPosition(0.5);
-            }
-            else if (gamepad2.a) {
-                // move to 180 degrees.
-                servoTest.setPosition(1);
-            }
-           */ 
-            
             //Arm
             
             if(gamepad2.right_trigger > 0){
-                tgtPowerArm = 0.15;
+                servoPos1 += 0.01;
             }
             else if(gamepad2.left_trigger > 0){
-                tgtPowerArm = -0.15;
+                servoPos1 += -0.01;
             }
             else {
-                tgtPowerArm = 0;
+                servoPos1 += 0;
             }
-            
-            servoPos1 = ((-this.gamepad2.left_stick_y)/2) + 0.5;
-            servoPos2 = ((this.gamepad2.right_stick_y)/2) + 0.5;
             servo1.setPosition(servoPos1);
-            servo2.setPosition(servoPos2);
             
-            motorArm.setPower(tgtPowerArm);
+            tgtPowerArmBase = ((-this.gamepad2.left_stick_y)/2) + 0.5;
+            motorArm.setPower(tgtPowerArmBase);
+            tgtPowerArmTop = ((-this.gamepad2.right_stick_y)/2) + 0.5;
+            motorTop.setPower(tgtPowerArmTop);
+            
             telemetry.addData("Servo Position 1", servo1.getPosition());
-            telemetry.addData("Servo Position 2", servo2.getPosition());
             telemetry.addData("Target R Power", tgtPower2);
             telemetry.addData("Target L Power", tgtPower);
             telemetry.addData("Motor R Power", motorRight.getPower());
