@@ -61,7 +61,7 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        // run until the end of the match (driver presses STOP)
+        // Run until the end of the match (driver presses STOP)
         double tgtPower = 0;
         double tgtPower2 = 0;
         double tgtPowerArmBase = 0;
@@ -141,9 +141,7 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
                     (int) (sensorColor.blue() * SCALE_FACTOR),
                     hsvValues);
             
-            telemetry.addData("Servo Position 1", servo1.getPosition());
-            telemetry.addData("Target R Power", tgtPower2);
-            telemetry.addData("Target L Power", tgtPower);
+            telemetry.addData("Servo Position", servo1.getPosition());
             telemetry.addData("Motor R Power", motorRight.getPower());
             telemetry.addData("Motor L Power", motorLeft.getPower());
             telemetry.addData("Distance (cm)", String.format(Locale.US, "%.02f", sensorDistance.getDistance(DistanceUnit.CM)));
