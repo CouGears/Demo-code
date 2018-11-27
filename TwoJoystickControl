@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import com.qualcomm.robotcore.hardware.Gyroscope;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -12,8 +13,15 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import java.util.Locale;
+import android.app.Activity;
+import android.graphics.Color;
+import android.view.View;
 
-@TeleOp
+@TeleOp(name = "Sensor: REVColorDistance", group = "Sensor")
 
 public class MyFIRSTJavaOpMode extends LinearOpMode {
     private DcMotor motorLeft;
@@ -22,10 +30,12 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
     private DcMotor motorTop;
     private DigitalChannel digitalTouch;
     private Blinker expansion_Hub_2;
-    private DistanceSensor sensorColorRange;
+    private ColorSensor sensorColorRange;
     private Servo servo1;
-
-
+    private ColorSensor sensorColor;
+    private DistanceSensor sensorDistance;
+    
+    
     @Override
     public void runOpMode() {
         motorRight = hardwareMap.get(DcMotor.class, "motorRight");
@@ -34,12 +44,19 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
         motorTop = hardwareMap.get(DcMotor.class, "motorTop");
         digitalTouch = hardwareMap.get(DigitalChannel.class, "digitalTouch");
         expansion_Hub_2 = hardwareMap.get(Blinker.class, "Expansion Hub 2");
-        sensorColorRange = hardwareMap.get(DistanceSensor.class, "sensorColorRange");
+        sensorColor = hardwareMap.get(ColorSensor.class, "sensorColorRange");
+        sensorDistance = hardwareMap.get(DistanceSensor.class, "sensorColorRange");
         servo1 = hardwareMap.get(Servo.class, "servo1");
         // set digital channel to input mode.
         digitalTouch.setMode(DigitalChannel.Mode.INPUT);
         telemetry.addData("Status", "Initialized");
         telemetry.update();
+        
+        float hsvValues[] = {0F, 0F, 0F};
+        final float values[] = hsvValues;
+        final double SCALE_FACTOR = 255;
+        int relativeLayoutId = hardwareMap.appContext.getResources().getIdentifier("RelativeLayout", "id", hardwareMap.appContext.getPackageName());
+        final View relativeLayout = ((Activity) hardwareMap.appContext).findViewById(relativeLayoutId);
         
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -50,9 +67,10 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
         double tgtPowerArmBase = 0;
         double tgtPowerArmTop = 0;
         double servoPos1 = 0;
-        
         int x = 0;
+        int times = 0;
         
+        // Controller operated
         while (opModeIsActive()) {
             if(gamepad1.a){
                 x = 0;
@@ -102,28 +120,35 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
             
             //Arm
             
-            if(gamepad2.right_trigger > 0){
-                servoPos1 += 0.01;
+            if(gamepad2.a){
+                servoPos1 = servoPos1 + 0.05;
             }
-            else if(gamepad2.left_trigger > 0){
-                servoPos1 += -0.01;
+            else if(gamepad2.b){
+                servoPos1 = -0.05;
             }
             else {
-                servoPos1 += 0;
+                
             }
             servo1.setPosition(servoPos1);
             
-            tgtPowerArmBase = ((-this.gamepad2.left_stick_y)/2) + 0.5;
+            tgtPowerArmBase = ((-this.gamepad2.left_stick_y)/4);
             motorArm.setPower(tgtPowerArmBase);
-            tgtPowerArmTop = ((-this.gamepad2.right_stick_y)/2) + 0.5;
+            tgtPowerArmTop = ((this.gamepad2.right_stick_y)/4);
             motorTop.setPower(tgtPowerArmTop);
+            
+            Color.RGBToHSV((int) (sensorColor.red() * SCALE_FACTOR),
+                    (int) (sensorColor.green() * SCALE_FACTOR),
+                    (int) (sensorColor.blue() * SCALE_FACTOR),
+                    hsvValues);
             
             telemetry.addData("Servo Position 1", servo1.getPosition());
             telemetry.addData("Target R Power", tgtPower2);
             telemetry.addData("Target L Power", tgtPower);
             telemetry.addData("Motor R Power", motorRight.getPower());
             telemetry.addData("Motor L Power", motorLeft.getPower());
-            telemetry.addData("Distance CM", sensorColorRange.getDistance(DistanceUnit.CM));
+            telemetry.addData("Distance (cm)", String.format(Locale.US, "%.02f", sensorDistance.getDistance(DistanceUnit.CM)));
+            telemetry.addData("Hue", hsvValues[0]);
+            
             // is button pressed?
             if (digitalTouch.getState() == false) {
                 // button is pressed.
@@ -134,7 +159,19 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
                 telemetry.addData("Button", "NOT PRESSED");
             }
             telemetry.addData("Status", "Running");
+            
+            relativeLayout.post(new Runnable() {
+                public void run() {
+                    relativeLayout.setBackgroundColor(Color.HSVToColor(0xff, values));
+                }
+            });
+
             telemetry.update();
         }
+        relativeLayout.post(new Runnable() {
+            public void run() {
+                relativeLayout.setBackgroundColor(Color.WHITE);
+            }
+        });
     }
 }
