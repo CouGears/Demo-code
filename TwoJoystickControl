@@ -72,6 +72,9 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
         
         // Controller operated
         while (opModeIsActive()) {
+            
+            // Wheel movements
+            
             if(gamepad1.a){
                 x = 0;
             }
@@ -102,7 +105,6 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
                 tgtPower2 = -((-this.gamepad1.left_stick_y)/15)+((-this.gamepad1.right_stick_x)/15);
             }
             
-            
             if (tgtPower > .5) {
                 tgtPower = .5;
             }
@@ -124,7 +126,7 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
                 servoPos1 = servoPos1 + 0.05;
             }
             else if(gamepad2.b){
-                servoPos1 = -0.05;
+                servoPos1 = servoPos1 - 0.05;
             }
             else {
                 
@@ -136,11 +138,13 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
             tgtPowerArmTop = ((this.gamepad2.right_stick_y)/4);
             motorTop.setPower(tgtPowerArmTop);
             
+            // Color sensor
             Color.RGBToHSV((int) (sensorColor.red() * SCALE_FACTOR),
                     (int) (sensorColor.green() * SCALE_FACTOR),
                     (int) (sensorColor.blue() * SCALE_FACTOR),
                     hsvValues);
             
+            // Screen updates
             telemetry.addData("Servo Position", servo1.getPosition());
             telemetry.addData("Motor R Power", motorRight.getPower());
             telemetry.addData("Motor L Power", motorLeft.getPower());
