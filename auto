@@ -74,7 +74,7 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
         
         // Lower robot down
         motorArm.setPower(.5);
-        motorTop.setPower(.5);
+        motorTop.setPower(-.5);
         try {
             Thread.sleep(500);//change
         }
@@ -139,6 +139,8 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
             Thread.sleep(5000-(1000*x));//change
         }
         catch (InterruptedException e) {}
+        
+        // Controller operated
         while (opModeIsActive()) {
             if(gamepad1.a){
                 x = 0;
@@ -188,20 +190,20 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
             
             //Arm
             
-            if(gamepad2.right_trigger > 0){
-                servoPos1 += 0.01;
+            if(gamepad2.a){
+                servoPos1 = servoPos1 + 0.05;
             }
-            else if(gamepad2.left_trigger > 0){
-                servoPos1 += -0.01;
+            else if(gamepad2.b){
+                servoPos1 = -0.05;
             }
             else {
-                servoPos1 += 0;
+                
             }
             servo1.setPosition(servoPos1);
             
             tgtPowerArmBase = ((-this.gamepad2.left_stick_y)/4);
             motorArm.setPower(tgtPowerArmBase);
-            tgtPowerArmTop = ((-this.gamepad2.right_stick_y)/4);
+            tgtPowerArmTop = ((this.gamepad2.right_stick_y)/4);
             motorTop.setPower(tgtPowerArmTop);
             
             Color.RGBToHSV((int) (sensorColor.red() * SCALE_FACTOR),
