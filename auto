@@ -71,7 +71,6 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
         int times = 0;
         
         // Autonomous code
-        
         // Lower robot down
         motorArm.setPower(.5);
         motorTop.setPower(-.5);
@@ -140,104 +139,7 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
         }
         catch (InterruptedException e) {}
         
-        // Controller operated
-        while (opModeIsActive()) {
-            if(gamepad1.a){
-                x = 0;
-            }
-            if(gamepad1.b){
-                x = 1;
-            }
-            if(gamepad1.x){
-                x = 2;
-            }
-            if(gamepad1.y){
-                x = 3;
-            }
-            
-            if(x == 0){ 
-                tgtPower = ((-this.gamepad1.left_stick_y)/2)+((-this.gamepad1.right_stick_x)/2);
-                tgtPower2 = -((-this.gamepad1.left_stick_y)/2)+((-this.gamepad1.right_stick_x)/2);
-            }
-            if(x == 1){ 
-                tgtPower = ((-this.gamepad1.left_stick_y)/5)+((-this.gamepad1.right_stick_x)/5);
-                tgtPower2 = -((-this.gamepad1.left_stick_y)/5)+((-this.gamepad1.right_stick_x)/5);
-            }
-            if(x == 2){ 
-                tgtPower = ((-this.gamepad1.left_stick_y)/10)+((-this.gamepad1.right_stick_x)/10);
-                tgtPower2 = -((-this.gamepad1.left_stick_y)/10)+((-this.gamepad1.right_stick_x)/10);
-            }
-            if(x == 3){ 
-                tgtPower = ((-this.gamepad1.left_stick_y)/15)+((-this.gamepad1.right_stick_x)/15);
-                tgtPower2 = -((-this.gamepad1.left_stick_y)/15)+((-this.gamepad1.right_stick_x)/15);
-            }
-            
-            
-            if (tgtPower > .5) {
-                tgtPower = .5;
-            }
-            else if (tgtPower < -.5) {
-                tgtPower = -.5;
-            }
-            if (tgtPower2 > .5) {
-                tgtPower2 = .5;
-            }
-            else if (tgtPower2 < -.5) {
-                tgtPower2 = -.5;
-            }
-            motorRight.setPower(tgtPower);
-            motorLeft.setPower(tgtPower2);
-            
-            //Arm
-            
-            if(gamepad2.a){
-                servoPos1 = servoPos1 + 0.05;
-            }
-            else if(gamepad2.b){
-                servoPos1 = -0.05;
-            }
-            else {
-                
-            }
-            servo1.setPosition(servoPos1);
-            
-            tgtPowerArmBase = ((-this.gamepad2.left_stick_y)/4);
-            motorArm.setPower(tgtPowerArmBase);
-            tgtPowerArmTop = ((this.gamepad2.right_stick_y)/4);
-            motorTop.setPower(tgtPowerArmTop);
-            
-            Color.RGBToHSV((int) (sensorColor.red() * SCALE_FACTOR),
-                    (int) (sensorColor.green() * SCALE_FACTOR),
-                    (int) (sensorColor.blue() * SCALE_FACTOR),
-                    hsvValues);
-            
-            telemetry.addData("Servo Position 1", servo1.getPosition());
-            telemetry.addData("Target R Power", tgtPower2);
-            telemetry.addData("Target L Power", tgtPower);
-            telemetry.addData("Motor R Power", motorRight.getPower());
-            telemetry.addData("Motor L Power", motorLeft.getPower());
-            telemetry.addData("Distance (cm)", String.format(Locale.US, "%.02f", sensorDistance.getDistance(DistanceUnit.CM)));
-            telemetry.addData("Hue", hsvValues[0]);
-            
-            // is button pressed?
-            if (digitalTouch.getState() == false) {
-                // button is pressed.
-                telemetry.addData("Button", "PRESSED");
-            } 
-            else {
-                // button is not pressed.
-                telemetry.addData("Button", "NOT PRESSED");
-            }
-            telemetry.addData("Status", "Running");
-            
-            relativeLayout.post(new Runnable() {
-                public void run() {
-                    relativeLayout.setBackgroundColor(Color.HSVToColor(0xff, values));
-                }
-            });
-
-            telemetry.update();
-        }
+        
         relativeLayout.post(new Runnable() {
             public void run() {
                 relativeLayout.setBackgroundColor(Color.WHITE);
