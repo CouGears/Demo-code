@@ -73,6 +73,160 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
         int x = 0;
         int times = 0;
         
+        // Autonomous code
+        // Lower robot down
+        /*motorArm.setPower(.5);
+        motorTop.setPower(-.5);
+        try {
+            Thread.sleep(3000);//change
+        }
+        catch (InterruptedException e) {}
+        motorArm.setPower(0);
+        motorTop.setPower(0);
+        
+        // Turn around
+        motorRight.setPower(.5);
+        motorLeft.setPower(-.5);
+        try {
+            Thread.sleep(3000);//change
+        }
+        catch (InterruptedException e) {}
+        motorRight.setPower(0);
+        motorLeft.setPower(0);
+        */
+        
+        //Drive until block
+        motorRight.setPower(.25);
+        motorLeft.setPower(-.25);
+        try {
+            Thread.sleep(1600);
+        }
+        catch (InterruptedException e) {}
+        motorRight.setPower(0);
+        motorLeft.setPower(0);
+        
+        //Look at blocks
+        for (int i = 0; i < 2; i++){
+            try {
+            Thread.sleep(100);
+        }
+        catch (InterruptedException e) {}
+            Color.RGBToHSV((int) (sensorColor.red() * SCALE_FACTOR),
+                    (int) (sensorColor.green() * SCALE_FACTOR),
+                    (int) (sensorColor.blue() * SCALE_FACTOR),
+                    hsvValues);
+            // If the object is yellow
+            if (hsvValues[0] < 65 && i < 2) {
+                motorRight.setPower(.25);
+                motorLeft.setPower(-.25);
+                try {
+                    Thread.sleep(1000);
+                }
+                catch (InterruptedException e) {}
+                motorRight.setPower(-.25);
+                motorLeft.setPower(.25);
+                try {
+                    Thread.sleep(1000);
+                }
+                catch (InterruptedException e) {}
+                motorRight.setPower(0);
+                motorLeft.setPower(0);
+                i = 3;
+                break;
+            }
+            
+            // If the first two objects are white
+            else if (i == 1){
+                motorRight.setPower(-.25);
+                motorLeft.setPower(.25);
+                try {
+                    Thread.sleep(1500);
+                }
+                catch (InterruptedException e) {}
+                motorRight.setPower(-.25);
+                motorLeft.setPower(-.25);
+                try {
+                    Thread.sleep(750);
+                }
+                catch (InterruptedException e) {}
+                motorRight.setPower(.25);
+                motorLeft.setPower(-.25);
+                try {
+                    Thread.sleep(500);//change
+                }
+                catch (InterruptedException e) {}
+                motorRight.setPower(.5);
+                motorLeft.setPower(-.1);
+                try {
+                    Thread.sleep(1300);
+                }
+                catch (InterruptedException e) {}
+                motorRight.setPower(0);
+                motorLeft.setPower(0);
+                
+                motorRight.setPower(.25);
+                motorLeft.setPower(-.25);
+                try {
+                    Thread.sleep(1000);//change
+                }
+                catch (InterruptedException e) {}
+                motorRight.setPower(0);
+                motorLeft.setPower(0);
+            }
+            
+            // If the object is white
+            else {
+                motorRight.setPower(-.25);
+                motorLeft.setPower(.25);
+                try {
+                    Thread.sleep(1500);
+                }
+                catch (InterruptedException e) {}
+                motorRight.setPower(-.25);
+                motorLeft.setPower(-.25);
+                try {
+                    Thread.sleep(750);//change
+                }
+                catch (InterruptedException e) {}
+                motorRight.setPower(.25);//change
+                motorLeft.setPower(-.25);//change
+                try {
+                    Thread.sleep(350);//change
+                }
+                catch (InterruptedException e) {}
+                motorRight.setPower(.5);//change
+                motorLeft.setPower(-.1);//change
+                try {
+                    Thread.sleep(1350);//change
+                }
+                catch (InterruptedException e) {}
+                motorRight.setPower(0);
+                motorLeft.setPower(0);
+                times++;
+            }
+        }
+        
+        /*
+        // Go to box in the corner
+        motorRight.setPower(.25);
+        motorLeft.setPower(-.25);
+        try {
+            Thread.sleep(1000);//change
+        }
+        catch (InterruptedException e) {}
+        motorRight.setPower(0);
+        motorLeft.setPower(0);
+        
+        // Drop the "flag"
+        servo2.setPosition(1);
+        
+        // Wait for the rest of the time
+        try {
+            Thread.sleep(30000-(6000*x));//change
+        }
+        catch (InterruptedException e) {}
+        */
+        
         // Controller operated
         while (opModeIsActive()) {
             
