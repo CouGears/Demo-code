@@ -63,205 +63,132 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        // run until the end of the match (driver presses STOP)
+        // Run until the end of the match (driver presses STOP)
         double tgtPower = 0;
         double tgtPower2 = 0;
         double tgtPowerArmBase = 0;
         double tgtPowerArmTop = 0;
-        double servoPos1 = 0;
+        double servoPos1 = 1;
+        double servoPos2 = 1;
         int x = 0;
         int times = 0;
         
-        // Autonomous code
-        // Lower robot down
-        /*motorArm.setPower(.5);
-        motorTop.setPower(-.5);
-        try {
-            Thread.sleep(3000);//change
-        }
-        catch (InterruptedException e) {}
-        motorArm.setPower(0);
-        motorTop.setPower(0);
-        
-        // Turn around
-        motorRight.setPower(.5);
-        motorLeft.setPower(-.5);
-        try {
-            Thread.sleep(3000);//change
-        }
-        catch (InterruptedException e) {}
-        motorRight.setPower(0);
-        motorLeft.setPower(0);
-        */
-        //Drive until block
-        motorRight.setPower(.25);
-        motorLeft.setPower(-.25);
-        try {
-            Thread.sleep(1600);
-        }
-        catch (InterruptedException e) {}
-        motorRight.setPower(0);
-        motorLeft.setPower(0);
-        
-        //Look at blocks
-        for (int i = 0; i < 3; i++){
-            try {
-            Thread.sleep(100);
-        }
-        catch (InterruptedException e) {}
+        // Controller operated
+        while (opModeIsActive()) {
+            
+            // Wheel movements
+            
+            if(gamepad1.a){
+                x = 0;
+            }
+            if(gamepad1.b){
+                x = 1;
+            }
+            if(gamepad1.x){
+                x = 2;
+            }
+            if(gamepad1.y){
+                x = 3;
+            }
+            
+            if(x == 0){ 
+                tgtPower = ((-this.gamepad1.left_stick_y)/2)+((-this.gamepad1.right_stick_x)/2);
+                tgtPower2 = -((-this.gamepad1.left_stick_y)/2)+((-this.gamepad1.right_stick_x)/2);
+            }
+            if(x == 1){ 
+                tgtPower = ((-this.gamepad1.left_stick_y)/5)+((-this.gamepad1.right_stick_x)/5);
+                tgtPower2 = -((-this.gamepad1.left_stick_y)/5)+((-this.gamepad1.right_stick_x)/5);
+            }
+            if(x == 2){ 
+                tgtPower = ((-this.gamepad1.left_stick_y)/10)+((-this.gamepad1.right_stick_x)/10);
+                tgtPower2 = -((-this.gamepad1.left_stick_y)/10)+((-this.gamepad1.right_stick_x)/10);
+            }
+            if(x == 3){ 
+                tgtPower = ((-this.gamepad1.left_stick_y)/3)+((-this.gamepad1.right_stick_x)/3);
+                tgtPower2 = -((-this.gamepad1.left_stick_y)/3)+((-this.gamepad1.right_stick_x)/3);
+            }
+            
+            if (tgtPower > .5) {
+                tgtPower = .5;
+            }
+            else if (tgtPower < -.5) {
+                tgtPower = -.5;
+            }
+            if (tgtPower2 > .5) {
+                tgtPower2 = .5;
+            }
+            else if (tgtPower2 < -.5) {
+                tgtPower2 = -.5;
+            }
+            motorRight.setPower(tgtPower);
+            motorLeft.setPower(tgtPower2);
+            
+            //Arm
+            
+            if(gamepad2.right_bumper){
+                servoPos1 = 1;
+            }
+            else if(gamepad2.left_bumper){
+                servoPos1 = 0.65;
+            }
+            else {
+                
+            }
+            servo1.setPosition(servoPos1);
+            
+            if(gamepad2.x){
+                servoPos2 = 1;
+            }
+            else if(gamepad2.y){
+                servoPos2 = 0.5;
+            }
+            else {
+                
+            }
+            servo2.setPosition(servoPos2);
+            
+            tgtPowerArmBase = ((this.gamepad2.right_stick_y)/4);
+            motorArm.setPower(tgtPowerArmBase);
+            if (this.gamepad2.left_stick_y < 0) {
+                tgtPowerArmTop = ((this.gamepad2.left_stick_y)/4);
+            }
+            else {
+                tgtPowerArmTop = ((this.gamepad2.left_stick_y)/8);
+            }
+            motorTop.setPower(tgtPowerArmTop);
+            
+            // Color sensor
             Color.RGBToHSV((int) (sensorColor.red() * SCALE_FACTOR),
                     (int) (sensorColor.green() * SCALE_FACTOR),
                     (int) (sensorColor.blue() * SCALE_FACTOR),
                     hsvValues);
-            // If the object is yellow
-            if (hsvValues[0] < 65) {
-                motorRight.setPower(.25);
-                motorLeft.setPower(-.25);
-                try {
-                    Thread.sleep(1000);
-                }
-                catch (InterruptedException e) {}
-                motorRight.setPower(-.25);
-                motorLeft.setPower(.25);
-                try {
-                    Thread.sleep(1000);
-                }
-                catch (InterruptedException e) {}
-                motorRight.setPower(0);
-                motorLeft.setPower(0);
-                i = 3;
-                break;
-                
-            }
             
-            // If the third object is yellow
-            else if (i == 2){
-                motorRight.setPower(-.25);
-                motorLeft.setPower(.25);
-                try {
-                    Thread.sleep(1500);
-                }
-                catch (InterruptedException e) {}
-                motorRight.setPower(-.25);
-                motorLeft.setPower(-.25);
-                try {
-                    Thread.sleep(750);
-                }
-                catch (InterruptedException e) {}
-                motorRight.setPower(.25);
-                motorLeft.setPower(-.25);
-                try {
-                    Thread.sleep(500);//change
-                }
-                catch (InterruptedException e) {}
-                motorRight.setPower(.5);
-                motorLeft.setPower(-.1);
-                try {
-                    Thread.sleep(1300);
-                }
-                catch (InterruptedException e) {}
-                motorRight.setPower(0);
-                motorLeft.setPower(0);
-                
-                motorRight.setPower(.25);
-                motorLeft.setPower(-.25);
-                try {
-                    Thread.sleep(1000);//change
-                }
-                catch (InterruptedException e) {}
-                motorRight.setPower(0);
-                motorLeft.setPower(0);
-            }
+            // Screen updates
+            telemetry.addData("Servo Position", servo1.getPosition());
+            telemetry.addData("Motor R Power", motorRight.getPower());
+            telemetry.addData("Motor L Power", motorLeft.getPower());
+            telemetry.addData("Distance (cm)", String.format(Locale.US, "%.02f", sensorDistance.getDistance(DistanceUnit.CM)));
+            telemetry.addData("Hue", hsvValues[0]);
             
-            // If the object is white
+            // is button pressed?
+            if (digitalTouch.getState() == false) {
+                // button is pressed.
+                telemetry.addData("Button", "PRESSED");
+            } 
             else {
-                motorRight.setPower(-.25);
-                motorLeft.setPower(.25);
-                try {
-                    Thread.sleep(1500);
-                }
-                catch (InterruptedException e) {}
-                motorRight.setPower(-.25);
-                motorLeft.setPower(-.25);
-                try {
-                    Thread.sleep(750);//change
-                }
-                catch (InterruptedException e) {}
-                motorRight.setPower(.25);//change
-                motorLeft.setPower(-.25);//change
-                try {
-                    Thread.sleep(400);//change
-                }
-                catch (InterruptedException e) {}
-                motorRight.setPower(.5);//change
-                motorLeft.setPower(-.1);//change
-                try {
-                    Thread.sleep(1300);//change
-                }
-                catch (InterruptedException e) {}
-                motorRight.setPower(0);
-                motorLeft.setPower(0);
-                times++;
+                // button is not pressed.
+                telemetry.addData("Button", "NOT PRESSED");
             }
+            telemetry.addData("Status", "Running");
+            
+            relativeLayout.post(new Runnable() {
+                public void run() {
+                    relativeLayout.setBackgroundColor(Color.HSVToColor(0xff, values));
+                }
+            });
+
+            telemetry.update();
         }
-        
-        /*
-        // Go to box in the corner
-        motorRight.setPower(-.25);
-        motorLeft.setPower(.25);
-        try {
-            Thread.sleep(1000);//change
-        }
-        catch (InterruptedException e) {}
-        motorRight.setPower(0);
-        motorLeft.setPower(0);
-        
-        motorRight.setPower(.25);
-        motorLeft.setPower(.25);
-        try {
-            Thread.sleep(1000);//change
-        }
-        catch (InterruptedException e) {}
-        motorRight.setPower(0);
-        motorLeft.setPower(0);
-        
-        motorRight.setPower(-.25);
-        motorLeft.setPower(-.25);
-        try {
-            Thread.sleep(1000);//change
-        }
-        catch (InterruptedException e) {}
-        motorRight.setPower(0);
-        motorLeft.setPower(0);
-        
-        motorRight.setPower(-.25);
-        motorLeft.setPower(-.25);
-        try {
-            Thread.sleep(1000);//change
-        }
-        catch (InterruptedException e) {}
-        motorRight.setPower(0);
-        motorLeft.setPower(0);
-        
-        motorRight.setPower(.25);
-        motorLeft.setPower(-.25);
-        try {
-            Thread.sleep(1000);//change
-        }
-        catch (InterruptedException e) {}
-        motorRight.setPower(0);
-        motorLeft.setPower(0);
-        
-        // Drop the "flag"
-        servo2.setPosition(1);
-        
-        // Wait for the rest of the time
-        try {
-            Thread.sleep(30000-(6000*x));//change
-        }
-        catch (InterruptedException e) {}
-        
-        */
         relativeLayout.post(new Runnable() {
             public void run() {
                 relativeLayout.setBackgroundColor(Color.WHITE);
