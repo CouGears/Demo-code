@@ -32,6 +32,7 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
     private Blinker expansion_Hub_2;
     private ColorSensor sensorColorRange;
     private Servo servo1;
+    private Servo servo2;
     private ColorSensor sensorColor;
     private DistanceSensor sensorDistance;
     
@@ -47,6 +48,7 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
         sensorColor = hardwareMap.get(ColorSensor.class, "sensorColorRange");
         sensorDistance = hardwareMap.get(DistanceSensor.class, "sensorColorRange");
         servo1 = hardwareMap.get(Servo.class, "servo1");
+        servo2 = hardwareMap.get(Servo.class, "servo2");
         // set digital channel to input mode.
         digitalTouch.setMode(DigitalChannel.Mode.INPUT);
         telemetry.addData("Status", "Initialized");
@@ -105,27 +107,34 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
                     (int) (sensorColor.green() * SCALE_FACTOR),
                     (int) (sensorColor.blue() * SCALE_FACTOR),
                     hsvValues);
-            if (hsvValues[0] < 60 || i == 2) {
+            if (hsvValues[0] < 60) {
                 motorRight.setPower(.5);
                 motorRight.setPower(.5);
                 try {
-                Thread.sleep(1000);//change
+                    Thread.sleep(1000);//change
                 }
                 catch (InterruptedException e) {}
-                i = 3;
-                break;
+                motorRight.setPower(-.5);
+                motorLeft.setPower(-.5);
+                try {
+                    Thread.sleep(1000);//change
+                }
+                catch (InterruptedException e) {}
+                motorRight.setPower(0);
+                motorLeft.setPower(0);
+                
             }
             else {
                 motorRight.setPower(-.5);
                 motorLeft.setPower(-.5);
                 try {
-                Thread.sleep(3000);//change
+                    Thread.sleep(3000);//change
                 }
                 catch (InterruptedException e) {}
                 motorRight.setPower(.5);//change
                 motorLeft.setPower(.25);//change
                 try {
-                Thread.sleep(3000);//change
+                    Thread.sleep(3000);//change
                 }
                 catch (InterruptedException e) {}
                 motorRight.setPower(0);
@@ -133,6 +142,55 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
                 times++;
             }
         }
+        
+        // Go to box in the corner
+        motorRight.setPower(-.5);
+        motorLeft.setPower(-.5);
+        try {
+            Thread.sleep(1000);//change
+        }
+        catch (InterruptedException e) {}
+        motorRight.setPower(0);
+        motorLeft.setPower(0);
+        
+        motorRight.setPower(.5);
+        motorLeft.setPower(-.5);
+        try {
+            Thread.sleep(1000);//change
+        }
+        catch (InterruptedException e) {}
+        motorRight.setPower(0);
+        motorLeft.setPower(0);
+        
+        motorRight.setPower(-.5);
+        motorLeft.setPower(.5);
+        try {
+            Thread.sleep(1000);//change
+        }
+        catch (InterruptedException e) {}
+        motorRight.setPower(0);
+        motorLeft.setPower(0);
+        
+        motorRight.setPower(-.5);
+        motorLeft.setPower(.5);
+        try {
+            Thread.sleep(1000);//change
+        }
+        catch (InterruptedException e) {}
+        motorRight.setPower(0);
+        motorLeft.setPower(0);
+        
+        motorRight.setPower(.5);
+        motorLeft.setPower(.5);
+        try {
+            Thread.sleep(1000);//change
+        }
+        catch (InterruptedException e) {}
+        motorRight.setPower(0);
+        motorLeft.setPower(0);
+        
+        // Drop the "flag"
+        servo2.setPosition(1);
         
         // Wait for the rest of the time
         try {
