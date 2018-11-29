@@ -218,13 +218,31 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
         motorLeft.setPower(0);
         
         // Drop the "flag"
-        servo2.setPosition(1);
-        
-        // Wait for the rest of the time
-        try {
-            Thread.sleep(30000-(6000*x));//change
+        if (times == 1||times == 2) {
+            servo2.setPosition(1);
         }
-        catch (InterruptedException e) {}
+        else {
+            servo2.setPosition(0);
+        }
+        // Wait for the rest of the time
+        if (times == 1){
+            try {
+                Thread.sleep(30000);//change
+            }
+            catch (InterruptedException e) {}
+        }
+        else if (times == 2){
+            try {
+                Thread.sleep(30000);//change
+            }
+            catch (InterruptedException e) {}
+        }
+        else {
+            try {
+                Thread.sleep(30000);//change
+            }
+            catch (InterruptedException e) {}
+        }
         */
         
         // Controller operated
