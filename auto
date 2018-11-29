@@ -75,7 +75,7 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
         motorArm.setPower(.5);
         motorTop.setPower(-.5);
         try {
-            Thread.sleep(500);//change
+            Thread.sleep(3000);//change
         }
         catch (InterruptedException e) {}
         motorArm.setPower(0);
@@ -85,7 +85,7 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
         motorRight.setPower(.5);
         motorLeft.setPower(-.5);
         try {
-            Thread.sleep(500);//change
+            Thread.sleep(3000);//change
         }
         catch (InterruptedException e) {}
         motorRight.setPower(0);
@@ -95,7 +95,7 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
         motorRight.setPower(.5);
         motorLeft.setPower(.5);
         try {
-            Thread.sleep(500);//change
+            Thread.sleep(3000);//change
         }
         catch (InterruptedException e) {}
         
@@ -109,22 +109,23 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
                 motorRight.setPower(.5);
                 motorRight.setPower(.5);
                 try {
-                Thread.sleep(500);//change
+                Thread.sleep(1000);//change
                 }
                 catch (InterruptedException e) {}
                 i = 3;
+                break;
             }
             else {
                 motorRight.setPower(-.5);
                 motorLeft.setPower(-.5);
                 try {
-                Thread.sleep(500);//change
+                Thread.sleep(3000);//change
                 }
                 catch (InterruptedException e) {}
                 motorRight.setPower(.5);//change
                 motorLeft.setPower(.25);//change
                 try {
-                Thread.sleep(500);//change
+                Thread.sleep(3000);//change
                 }
                 catch (InterruptedException e) {}
                 motorRight.setPower(0);
@@ -135,7 +136,7 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
         
         // Wait for the rest of the time
         try {
-            Thread.sleep(5000-(1000*x));//change
+            Thread.sleep(30000-(6000*x));//change
         }
         catch (InterruptedException e) {}
         
