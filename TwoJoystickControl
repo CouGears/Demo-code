@@ -69,7 +69,7 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
         double tgtPowerArmBase = 0;
         double tgtPowerArmTop = 0;
         double servoPos1 = 1;
-        double servoPos2 = 1;
+        double servoPos2 = 0.5;
         int x = 0;
         int times = 0;
         
@@ -147,7 +147,7 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
             }
             servo2.setPosition(servoPos2);
             
-            tgtPowerArmBase = ((-this.gamepad2.right_stick_y)/4);
+            tgtPowerArmBase = ((this.gamepad2.right_stick_y)/4);
             motorArm.setPower(tgtPowerArmBase);
             if (this.gamepad2.left_stick_y < 0) {
                 tgtPowerArmTop = ((this.gamepad2.left_stick_y)/4);
