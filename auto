@@ -95,6 +95,22 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
         motorLeft.setPower(0);
         */
         
+        while(!seeBlock){
+            motorArm.setPower(.5);
+            motorRight.setPower(.25);
+            motorLeft.setPower(-.25);
+            timer++;
+            if(sensorDistance < 4) seeBlock = true;
+            
+            try {
+                Thread.sleep(1);
+            }
+            catch (InterruptedException e) {}
+        }
+        motorArm.setPower(0);
+        motorRight.setPower(0);
+        motorLeft.setPower(0);
+        
         //Drive until block
         motorRight.setPower(.25);
         motorLeft.setPower(-.25);
