@@ -1,38 +1,35 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import com.qualcomm.robotcore.hardware.Gyroscope;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Blinker;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import java.util.Locale;
 import android.app.Activity;
 import android.graphics.Color;
 import android.view.View;
 
-@TeleOp(name = "Sensor: REVColorDistance", group = "Sensor")
+@TeleOp//(name = "Sensor: REVColorDistance", group = "Sensor")
 
 public class MyFIRSTJavaOpMode extends LinearOpMode {
     private DcMotor motorLeft;
     private DcMotor motorRight;
     private DcMotor motorArm;
     private DcMotor motorTop;
-    private DigitalChannel digitalTouch;
+    private DcMotor motorSide;
+    //private DigitalChannel digitalTouch;
     private Blinker expansion_Hub_2;
     private ColorSensor sensorColorRange;
     private Servo servo1;
     private Servo servo2;
+    private Servo servoClaw1;
+    private Servo servoClaw2;
     private ColorSensor sensorColor;
     private DistanceSensor sensorDistance;
     
@@ -43,14 +40,17 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
         motorLeft = hardwareMap.get(DcMotor.class, "motorLeft");
         motorArm = hardwareMap.get(DcMotor.class, "motorArm");
         motorTop = hardwareMap.get(DcMotor.class, "motorTop");
-        digitalTouch = hardwareMap.get(DigitalChannel.class, "digitalTouch");
+        motorSide = hardwareMap.get(DcMotor.class, "motorSide");
+        //digitalTouch = hardwareMap.get(DigitalChannel.class, "digitalTouch");
         expansion_Hub_2 = hardwareMap.get(Blinker.class, "Expansion Hub 2");
         sensorColor = hardwareMap.get(ColorSensor.class, "sensorColorRange");
         sensorDistance = hardwareMap.get(DistanceSensor.class, "sensorColorRange");
         servo1 = hardwareMap.get(Servo.class, "servo1");
         servo2 = hardwareMap.get(Servo.class, "servo2");
+        servoClaw1 = hardwareMap.get(Servo.class, "servoClaw1");
+        servoClaw2 = hardwareMap.get(Servo.class, "servoClaw2");
         // set digital channel to input mode.
-        digitalTouch.setMode(DigitalChannel.Mode.INPUT);
+        //digitalTouch.setMode(DigitalChannel.Mode.INPUT);
         telemetry.addData("Status", "Initialized");
         telemetry.update();
         
@@ -58,7 +58,7 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
         final float values[] = hsvValues;
         final double SCALE_FACTOR = 255;
         int relativeLayoutId = hardwareMap.appContext.getResources().getIdentifier("RelativeLayout", "id", hardwareMap.appContext.getPackageName());
-        final View relativeLayout = ((Activity) hardwareMap.appContext).findViewById(relativeLayoutId);
+        //final View relativeLayout = ((Activity) hardwareMap.appContext).findViewById(relativeLayoutId);
         
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -69,181 +69,11 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
         double tgtPowerArmBase = 0;
         double tgtPowerArmTop = 0;
         double servoPos1 = 1;
-        double servoPos2 = 1;
+        double servoPos2 = 0.5;
+        double servoPosClaw1 = 1;
+        double servoPosClaw2 = 0.5;
         int x = 0;
         int times = 0;
-        
-        // Autonomous code
-        // Lower robot down
-        /*motorArm.setPower(.5);
-        motorTop.setPower(-.5);
-        try {
-            Thread.sleep(3000);//change
-        }
-        catch (InterruptedException e) {}
-        motorArm.setPower(0);
-        motorTop.setPower(0);
-        
-        // Turn around
-        motorRight.setPower(.5);
-        motorLeft.setPower(-.5);
-        try {
-            Thread.sleep(3000);//change
-        }
-        catch (InterruptedException e) {}
-        motorRight.setPower(0);
-        motorLeft.setPower(0);
-        */
-        
-        //Drive until block
-        motorRight.setPower(.25);
-        motorLeft.setPower(-.25);
-        try {
-            Thread.sleep(1600);
-        }
-        catch (InterruptedException e) {}
-        motorRight.setPower(0);
-        motorLeft.setPower(0);
-        
-        //Look at blocks
-        for (int i = 0; i < 2; i++){
-            try {
-            Thread.sleep(100);
-        }
-        catch (InterruptedException e) {}
-            Color.RGBToHSV((int) (sensorColor.red() * SCALE_FACTOR),
-                    (int) (sensorColor.green() * SCALE_FACTOR),
-                    (int) (sensorColor.blue() * SCALE_FACTOR),
-                    hsvValues);
-            // If the object is yellow
-            if (hsvValues[0] < 65 && i < 2) {
-                motorRight.setPower(.25);
-                motorLeft.setPower(-.25);
-                try {
-                    Thread.sleep(1000);
-                }
-                catch (InterruptedException e) {}
-                motorRight.setPower(-.25);
-                motorLeft.setPower(.25);
-                try {
-                    Thread.sleep(1000);
-                }
-                catch (InterruptedException e) {}
-                motorRight.setPower(0);
-                motorLeft.setPower(0);
-                i = 3;
-                break;
-            }
-            
-            // If the first two objects are white
-            else if (i == 1){
-                motorRight.setPower(-.25);
-                motorLeft.setPower(.25);
-                try {
-                    Thread.sleep(1500);
-                }
-                catch (InterruptedException e) {}
-                motorRight.setPower(-.25);
-                motorLeft.setPower(-.25);
-                try {
-                    Thread.sleep(750);
-                }
-                catch (InterruptedException e) {}
-                motorRight.setPower(.25);
-                motorLeft.setPower(-.25);
-                try {
-                    Thread.sleep(500);//change
-                }
-                catch (InterruptedException e) {}
-                motorRight.setPower(.5);
-                motorLeft.setPower(-.1);
-                try {
-                    Thread.sleep(1300);
-                }
-                catch (InterruptedException e) {}
-                motorRight.setPower(0);
-                motorLeft.setPower(0);
-                
-                motorRight.setPower(.25);
-                motorLeft.setPower(-.25);
-                try {
-                    Thread.sleep(1000);//change
-                }
-                catch (InterruptedException e) {}
-                motorRight.setPower(0);
-                motorLeft.setPower(0);
-            }
-            
-            // If the object is white
-            else {
-                motorRight.setPower(-.25);
-                motorLeft.setPower(.25);
-                try {
-                    Thread.sleep(1500);
-                }
-                catch (InterruptedException e) {}
-                motorRight.setPower(-.25);
-                motorLeft.setPower(-.25);
-                try {
-                    Thread.sleep(750);//change
-                }
-                catch (InterruptedException e) {}
-                motorRight.setPower(.25);//change
-                motorLeft.setPower(-.25);//change
-                try {
-                    Thread.sleep(350);//change
-                }
-                catch (InterruptedException e) {}
-                motorRight.setPower(.5);//change
-                motorLeft.setPower(-.1);//change
-                try {
-                    Thread.sleep(1350);//change
-                }
-                catch (InterruptedException e) {}
-                motorRight.setPower(0);
-                motorLeft.setPower(0);
-                times++;
-            }
-        }
-        
-        /*
-        // Go to box in the corner
-        motorRight.setPower(.25);
-        motorLeft.setPower(-.25);
-        try {
-            Thread.sleep(1000);//change
-        }
-        catch (InterruptedException e) {}
-        motorRight.setPower(0);
-        motorLeft.setPower(0);
-        
-        // Drop the "flag"
-        if (times == 1||times == 2) {
-            servo2.setPosition(1);
-        }
-        else {
-            servo2.setPosition(0);
-        }
-        // Wait for the rest of the time
-        if (times == 1){
-            try {
-                Thread.sleep(30000);//change
-            }
-            catch (InterruptedException e) {}
-        }
-        else if (times == 2){
-            try {
-                Thread.sleep(30000);//change
-            }
-            catch (InterruptedException e) {}
-        }
-        else {
-            try {
-                Thread.sleep(30000);//change
-            }
-            catch (InterruptedException e) {}
-        }
-        */
         
         // Controller operated
         while (opModeIsActive()) {
@@ -309,17 +139,28 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
             servo1.setPosition(servoPos1);
             
             if(gamepad2.x){
-                servoPos2 = 1;
+                servoPosClaw1 = 1;
             }
             else if(gamepad2.y){
-                servoPos2 = 0.5;
+                servoPosClaw1 = 0.5;
             }
             else {
                 
             }
-            servo2.setPosition(servoPos2);
+            servoClaw1.setPosition(servoPosClaw1);
             
-            tgtPowerArmBase = ((-this.gamepad2.right_stick_y)/4);
+            if(gamepad2.a){
+                servoPosClaw2 = 1;
+            }
+            else if(gamepad2.b){
+                servoPosClaw2 = 0.5;
+            }
+            else {
+                
+            }
+            servoClaw2.setPosition(servoPosClaw2);
+            
+            tgtPowerArmBase = ((this.gamepad2.right_stick_y)/4);
             motorArm.setPower(tgtPowerArmBase);
             if (this.gamepad2.left_stick_y < 0) {
                 tgtPowerArmTop = ((this.gamepad2.left_stick_y)/4);
@@ -328,6 +169,15 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
                 tgtPowerArmTop = ((this.gamepad2.left_stick_y)/8);
             }
             motorTop.setPower(tgtPowerArmTop);
+            if (gamepad2.a) {
+                motorSide.setPower(.25);
+            }
+            else if (gamepad2.b) {
+                motorSide.setPower(-.25);
+            }
+            else {
+                motorSide.setPower(0);
+            }
             
             // Color sensor
             Color.RGBToHSV((int) (sensorColor.red() * SCALE_FACTOR),
@@ -343,7 +193,7 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
             telemetry.addData("Hue", hsvValues[0]);
             
             // is button pressed?
-            if (digitalTouch.getState() == false) {
+            /*if (digitalTouch.getState() == false) {
                 // button is pressed.
                 telemetry.addData("Button", "PRESSED");
             } 
@@ -351,20 +201,20 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
                 // button is not pressed.
                 telemetry.addData("Button", "NOT PRESSED");
             }
-            telemetry.addData("Status", "Running");
+            telemetry.addData("Status", "Running");*/
             
-            relativeLayout.post(new Runnable() {
+            /*relativeLayout.post(new Runnable() {
                 public void run() {
                     relativeLayout.setBackgroundColor(Color.HSVToColor(0xff, values));
                 }
-            });
+            });*/
 
             telemetry.update();
         }
-        relativeLayout.post(new Runnable() {
+        /*relativeLayout.post(new Runnable() {
             public void run() {
-                relativeLayout.setBackgroundColor(Color.WHITE);
+                //relativeLayout.setBackgroundColor(Color.WHITE);
             }
-        });
+        });*/
     }
 }
