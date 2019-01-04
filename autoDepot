@@ -1,0 +1,257 @@
+package org.firstinspires.ftc.teamcode;
+
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import java.util.Timer;
+import java.lang.annotation.Target;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Blinker;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.Servo;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import com.qualcomm.robotcore.hardware.Gyroscope;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import java.util.Locale;
+import android.app.Activity;
+import android.graphics.Color;
+import android.view.View;
+
+@Autonomous//(name = "Sensor: REVColorDistance", group = "Sensor")
+
+public class autoDepot extends LinearOpMode {
+    private DcMotor motorLeft;
+    private DcMotor motorRight;
+    private DcMotor motorSide1;
+    private DcMotor motorSide2;
+    //private DigitalChannel digitalTouch;
+    private Blinker expansion_Hub_2;
+    private ColorSensor sensorColorRange;
+    private Servo servo;
+    private Servo servo2;
+    private Servo servoClaw1;
+    private Servo servoClaw2;
+    private ColorSensor sensorColor;
+    private DistanceSensor sensorDistance;
+    
+    
+    @Override
+    public void runOpMode() {
+        motorRight = hardwareMap.get(DcMotor.class, "motorRight");
+        motorLeft = hardwareMap.get(DcMotor.class, "motorLeft");
+        motorSide1 = hardwareMap.get(DcMotor.class, "motorSide1");
+        motorSide2 = hardwareMap.get(DcMotor.class, "motorSide2");
+        //digitalTouch = hardwareMap.get(DigitalChannel.class, "digitalTouch");
+        expansion_Hub_2 = hardwareMap.get(Blinker.class, "Expansion Hub 2");
+        sensorColor = hardwareMap.get(ColorSensor.class, "sensorColorRange");
+        sensorDistance = hardwareMap.get(DistanceSensor.class, "sensorColorRange");
+        servo = hardwareMap.get(Servo.class, "servo1");
+        servo2 = hardwareMap.get(Servo.class, "servo2");
+        servoClaw1 = hardwareMap.get(Servo.class, "servoClaw1");
+        servoClaw2 = hardwareMap.get(Servo.class, "servoClaw2");
+        
+        // set digital channel to input mode.
+        //digitalTouch.setMode(DigitalChannel.Mode.INPUT);
+        telemetry.addData("Status", "Initialized");
+        telemetry.update();
+       
+        float hsvValues[] = {0F, 0F, 0F};
+        final float values[] = hsvValues;
+        final double SCALE_FACTOR = 255;
+        int relativeLayoutId = hardwareMap.appContext.getResources().getIdentifier("RelativeLayout", "id", hardwareMap.appContext.getPackageName());
+        //final View relativeLayout = ((Activity) hardwareMap.appContext).findViewById(relativeLayoutId);
+        
+        // Wait for the game to start (driver presses PLAY)
+        waitForStart();
+
+        // Run until the end of the match (driver presses STOP)
+        double tgtPower = 0;
+        double tgtPower2 = 0;
+        double tgtPowerArmBase = 0;
+        double tgtPowerArmTop = 0;
+        double servoPos1 = 1;
+        double servoPos2 = 0.5;
+        double servoPosClaw1 = 1;
+        double servoPosClaw2 = 0.5;
+        int x = 0;
+        int times = 0;
+        servo.setPosition(.5);
+        
+        //Very important
+        long speedVar = 0L;
+
+        //actual autonomous Code
+        
+        //Have the robot lower itself
+        motorSide1.setPower(.25);
+        motorSide1.setPower(-.25);
+        try {
+            Thread.sleep(3000);//change
+        }
+        catch (InterruptedException e) {}
+        motorSide1.setPower(0);
+        motorSide1.setPower(0);
+        
+        //drive toward block
+        while(hsvValues[0] < 100 && hsvValues[0] > 40){
+            motorRight.setPower(.25);
+            motorLeft.setPower(-.25);
+            speedVar++;
+            Color.RGBToHSV((int) (sensorColor.red() * SCALE_FACTOR),
+                    (int) (sensorColor.green() * SCALE_FACTOR),
+                    (int) (sensorColor.blue() * SCALE_FACTOR),
+                    hsvValues);
+            try {
+                Thread.sleep(1);
+            }
+            catch (InterruptedException e) {}
+        }
+        //make the robot stop at block
+        motorRight.setPower(0);
+        motorLeft.setPower(0);
+        
+        int runs = 0;
+        
+        for (int i = 0; i < 2; i++){
+            //stop infront of block so we know it works
+            try {
+                Thread.sleep(1000);
+            }
+            catch (InterruptedException e) {}
+            
+            Color.RGBToHSV((int) (sensorColor.red() * SCALE_FACTOR),
+                    (int) (sensorColor.green() * SCALE_FACTOR),
+                    (int) (sensorColor.blue() * SCALE_FACTOR),
+                    hsvValues);
+            // If the object is yellow
+            if (hsvValues[0] < 65) {
+                //drive forward to push it off
+                motorRight.setPower(.25);
+                motorLeft.setPower(-.25);
+                try {
+                    Thread.sleep(speedVar/5L);
+                }
+                catch (InterruptedException e) {}
+                //stop
+                motorRight.setPower(0);
+                motorLeft.setPower(0);
+                runs = i+1;
+                i = 3;
+                break;
+            }
+            
+            // If the first two objects are white
+            else if (i == 1){
+                //back up
+                motorRight.setPower(-.25);
+                motorLeft.setPower(.25);
+                try {
+                    Thread.sleep(speedVar/2L);//change
+                }
+                catch (InterruptedException e) {}
+                
+                //turn 90 degrees
+                motorRight.setPower(-.25);
+                motorLeft.setPower(-.25);
+                try {
+                    Thread.sleep(speedVar/4L);//change
+                }
+                catch (InterruptedException e) {}
+                
+                //move forward a bit
+                motorRight.setPower(.25);
+                motorLeft.setPower(-.25);
+                try {
+                    Thread.sleep(speedVar/8L);
+                }
+                catch (InterruptedException e) {}
+                
+                //arc to the block
+                motorRight.setPower(.5);//change
+                motorLeft.setPower(-.1);//change
+                try {
+                    Thread.sleep(speedVar/5L*11L);//change
+                }
+                catch (InterruptedException e) {}
+                
+                //push the block off
+                motorRight.setPower(.25);
+                motorLeft.setPower(-.25);
+                try {
+                    Thread.sleep(speedVar/5L);
+                }
+                catch (InterruptedException e) {}
+                
+                //stop
+                motorRight.setPower(0);
+                motorLeft.setPower(0);
+                runs = 3;
+            }
+            
+            // If the object is white
+            else {
+                //back up
+                motorRight.setPower(-.25);
+                motorLeft.setPower(.25);
+                try {
+                    Thread.sleep(speedVar/2L);//change
+                }
+                catch (InterruptedException e) {}
+                
+                //turn 90 degrees
+                motorRight.setPower(-.25);
+                motorLeft.setPower(-.25);
+                try {
+                    Thread.sleep(speedVar/4L);//change
+                }
+                catch (InterruptedException e) {}
+                
+                //move forward a bit
+                motorRight.setPower(.25);
+                motorLeft.setPower(-.25);
+                try {
+                    Thread.sleep(speedVar/8L);
+                }
+                catch (InterruptedException e) {}
+                
+                //arc to the block
+                motorRight.setPower(.5);//change
+                motorLeft.setPower(-.1);//change
+                try {
+                    Thread.sleep(speedVar/5L*11L);//change
+                }
+                catch (InterruptedException e) {}
+                
+                //stop
+                motorRight.setPower(0);
+                motorLeft.setPower(0);
+            }
+            
+        }
+        
+        //Go to the depot
+        /*if (runs == 1) {
+            
+            
+        }
+        
+        else if (runs == 2) {
+            
+        }
+        
+        else {
+            
+        }*/
+        //relativeLayout.post(new Runnable() {
+            //public void run() {
+                //relativeLayout.setBackgroundColor(Color.WHITE);
+            //}
+        //});   
+    }
+}
+
