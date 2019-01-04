@@ -20,9 +20,8 @@ import android.view.View;
 public class MyFIRSTJavaOpMode extends LinearOpMode {
     private DcMotor motorLeft;
     private DcMotor motorRight;
-    private DcMotor motorArm;
-    private DcMotor motorTop;
-    private DcMotor motorSide;
+    private DcMotor motorSide1;
+    private DcMotor motorSide2;
     //private DigitalChannel digitalTouch;
     private Blinker expansion_Hub_2;
     private ColorSensor sensorColorRange;
@@ -38,9 +37,8 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
     public void runOpMode() {
         motorRight = hardwareMap.get(DcMotor.class, "motorRight");
         motorLeft = hardwareMap.get(DcMotor.class, "motorLeft");
-        motorArm = hardwareMap.get(DcMotor.class, "motorArm");
-        motorTop = hardwareMap.get(DcMotor.class, "motorTop");
-        motorSide = hardwareMap.get(DcMotor.class, "motorSide");
+        motorSide1 = hardwareMap.get(DcMotor.class, "motorSide1");
+        motorSide2 = hardwareMap.get(DcMotor.class, "motorSide2");
         //digitalTouch = hardwareMap.get(DigitalChannel.class, "digitalTouch");
         expansion_Hub_2 = hardwareMap.get(Blinker.class, "Expansion Hub 2");
         sensorColor = hardwareMap.get(ColorSensor.class, "sensorColorRange");
@@ -160,24 +158,8 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
             }
             servoClaw2.setPosition(servoPosClaw2);
             
-            tgtPowerArmBase = ((this.gamepad2.right_stick_y)/4);
-            motorArm.setPower(tgtPowerArmBase);
-            if (this.gamepad2.left_stick_y < 0) {
-                tgtPowerArmTop = ((this.gamepad2.left_stick_y)/4);
-            }
-            else {
-                tgtPowerArmTop = ((this.gamepad2.left_stick_y)/8);
-            }
-            motorTop.setPower(tgtPowerArmTop);
-            if (gamepad2.a) {
-                motorSide.setPower(.25);
-            }
-            else if (gamepad2.b) {
-                motorSide.setPower(-.25);
-            }
-            else {
-                motorSide.setPower(0);
-            }
+            motorSide1.setPower(this.gamepad2.left_stick_y/4);
+            motorSide2.setPower(this.gamepad2.left_stick_y/4);
             
             // Color sensor
             Color.RGBToHSV((int) (sensorColor.red() * SCALE_FACTOR),
