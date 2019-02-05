@@ -20,35 +20,28 @@ import android.view.View;
 public class MyFIRSTJavaOpMode extends LinearOpMode {
     private DcMotor motorLeft;
     private DcMotor motorRight;
-    private DcMotor motorSide1;
-    private DcMotor motorSide2;
-    //private DigitalChannel digitalTouch;
-    private Blinker expansion_Hub_2;
+    private DcMotor motorSide;
+    //private Blinker expansion_Hub_2;
     private ColorSensor sensorColorRange;
-    private Servo servo1;
-    private Servo servo2;
-    private Servo servoClaw1;
-    private Servo servoClaw2;
+    private Servo servoMarker;
+    private Servo servoHolder;
+    private Servo servo3;
     private ColorSensor sensorColor;
     private DistanceSensor sensorDistance;
     
     
     @Override
     public void runOpMode() {
-        motorRight = hardwareMap.get(DcMotor.class, "motorRight");
         motorLeft = hardwareMap.get(DcMotor.class, "motorLeft");
-        motorSide1 = hardwareMap.get(DcMotor.class, "motorSide1");
-        motorSide2 = hardwareMap.get(DcMotor.class, "motorSide2");
-        //digitalTouch = hardwareMap.get(DigitalChannel.class, "digitalTouch");
-        expansion_Hub_2 = hardwareMap.get(Blinker.class, "Expansion Hub 2");
+        motorRight = hardwareMap.get(DcMotor.class, "motorRight");
+
+        motorSide = hardwareMap.get(DcMotor.class, "motorSide");
+        //expansion_Hub_2 = hardwareMap.get(Blinker.class, "Expansion Hub 2");
         sensorColor = hardwareMap.get(ColorSensor.class, "sensorColorRange");
         sensorDistance = hardwareMap.get(DistanceSensor.class, "sensorColorRange");
-        servo1 = hardwareMap.get(Servo.class, "servo1");
-        servo2 = hardwareMap.get(Servo.class, "servo2");
-        servoClaw1 = hardwareMap.get(Servo.class, "servoClaw1");
-        servoClaw2 = hardwareMap.get(Servo.class, "servoClaw2");
-        // set digital channel to input mode.
-        //digitalTouch.setMode(DigitalChannel.Mode.INPUT);
+        servoMarker = hardwareMap.get(Servo.class, "servoMarker");
+        servoHolder = hardwareMap.get(Servo.class, "servoHolder");
+        servo3 = hardwareMap.get(Servo.class, "servo3");
         telemetry.addData("Status", "Initialized");
         telemetry.update();
         
@@ -92,20 +85,20 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
             }
             
             if(x == 0){ 
-                tgtPower = ((-this.gamepad1.left_stick_y)/2)+((-this.gamepad1.right_stick_x)/2);
-                tgtPower2 = -((-this.gamepad1.left_stick_y)/2)+((-this.gamepad1.right_stick_x)/2);
+                tgtPower = ((this.gamepad1.left_stick_y)/2)+((-this.gamepad1.right_stick_x)/2);
+                tgtPower2 = -((this.gamepad1.left_stick_y)/2)+((-this.gamepad1.right_stick_x)/2);
             }
             if(x == 1){ 
-                tgtPower = ((-this.gamepad1.left_stick_y)/5)+((-this.gamepad1.right_stick_x)/5);
-                tgtPower2 = -((-this.gamepad1.left_stick_y)/5)+((-this.gamepad1.right_stick_x)/5);
+                tgtPower = ((this.gamepad1.left_stick_y)/5)+((-this.gamepad1.right_stick_x)/5);
+                tgtPower2 = -((this.gamepad1.left_stick_y)/5)+((-this.gamepad1.right_stick_x)/5);
             }
             if(x == 2){ 
-                tgtPower = ((-this.gamepad1.left_stick_y)/10)+((-this.gamepad1.right_stick_x)/10);
-                tgtPower2 = -((-this.gamepad1.left_stick_y)/10)+((-this.gamepad1.right_stick_x)/10);
+                tgtPower = ((this.gamepad1.left_stick_y)/10)+((-this.gamepad1.right_stick_x)/10);
+                tgtPower2 = -((this.gamepad1.left_stick_y)/10)+((-this.gamepad1.right_stick_x)/10);
             }
             if(x == 3){ 
-                tgtPower = ((-this.gamepad1.left_stick_y)/3)+((-this.gamepad1.right_stick_x)/3);
-                tgtPower2 = -((-this.gamepad1.left_stick_y)/3)+((-this.gamepad1.right_stick_x)/3);
+                tgtPower = ((this.gamepad1.left_stick_y)/3)+((-this.gamepad1.right_stick_x)/3);
+                tgtPower2 = -((this.gamepad1.left_stick_y)/3)+((-this.gamepad1.right_stick_x)/3);
             }
             
             if (tgtPower > .5) {
@@ -123,43 +116,30 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
             motorRight.setPower(tgtPower);
             motorLeft.setPower(tgtPower2);
             
-            //Arm
+            //Veritical Arm
+            motorSide.setPower(-this.gamepad2.left_stick_y/3);
             
-            if(gamepad2.right_bumper){
-                servoPos1 = 1;
-            }
-            else if(gamepad2.left_bumper){
-                servoPos1 = 0.65;
+            if (this.gamepad2.right_stick_y < 1) {
+                servo3.setPosition(0);
             }
             else {
-                
+                servo3.setPosition(1);
             }
-            servo1.setPosition(servoPos1);
             
-            if(gamepad2.x){
-                servoPosClaw1 = 1;
+            if (this.gamepad2.a) {
+                servoHolder.setPosition(0);
             }
-            else if(gamepad2.y){
-                servoPosClaw1 = 0.5;
-            }
-            else {
-                
-            }
-            servoClaw1.setPosition(servoPosClaw1);
             
-            if(gamepad2.a){
-                servoPosClaw2 = 1;
+            else if (this.gamepad2.b) {
+                servoHolder.setPosition(1);
             }
-            else if(gamepad2.b){
-                servoPosClaw2 = 0.5;
-            }
-            else {
-                
-            }
-            servoClaw2.setPosition(servoPosClaw2);
             
-            motorSide1.setPower(this.gamepad2.left_stick_y/4);
-            motorSide2.setPower(this.gamepad2.left_stick_y/4);
+            else if (this.gamepad2.x) {
+                servoMarker.setPosition(1);
+            }
+            else if (this.gamepad2.y) {
+                servoMarker.setPosition(1);
+            }
             
             // Color sensor
             Color.RGBToHSV((int) (sensorColor.red() * SCALE_FACTOR),
@@ -168,35 +148,11 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
                     hsvValues);
             
             // Screen updates
-            telemetry.addData("Servo Position", servo1.getPosition());
             telemetry.addData("Motor R Power", motorRight.getPower());
             telemetry.addData("Motor L Power", motorLeft.getPower());
             telemetry.addData("Distance (cm)", String.format(Locale.US, "%.02f", sensorDistance.getDistance(DistanceUnit.CM)));
             telemetry.addData("Hue", hsvValues[0]);
-            
-            // is button pressed?
-            /*if (digitalTouch.getState() == false) {
-                // button is pressed.
-                telemetry.addData("Button", "PRESSED");
-            } 
-            else {
-                // button is not pressed.
-                telemetry.addData("Button", "NOT PRESSED");
-            }
-            telemetry.addData("Status", "Running");*/
-            
-            /*relativeLayout.post(new Runnable() {
-                public void run() {
-                    relativeLayout.setBackgroundColor(Color.HSVToColor(0xff, values));
-                }
-            });*/
-
             telemetry.update();
         }
-        /*relativeLayout.post(new Runnable() {
-            public void run() {
-                //relativeLayout.setBackgroundColor(Color.WHITE);
-            }
-        });*/
     }
 }
