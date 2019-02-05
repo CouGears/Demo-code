@@ -113,7 +113,7 @@ public class AutoCreator extends LinearOpMode {
         motorRight.setPower(-.25);
         motorLeft.setPower(.25);
         try {
-            Thread.sleep(200);//change
+            Thread.sleep(200);
         }
         catch (InterruptedException e) {}
         
@@ -123,7 +123,7 @@ public class AutoCreator extends LinearOpMode {
         //sample
         int runs = 0;
         for (int i = 0; i < 2; i++){
-            //stop infront of block so we know it works
+            //stop in front of block so we know it works
             try {
                 Thread.sleep(1000);
             }
