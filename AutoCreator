@@ -96,7 +96,7 @@ public class AutoCreator extends LinearOpMode {
         }
         catch (InterruptedException e) {}
         
-        //drive off block
+        //drive to block
         motorRight.setPower(-.25);
         motorLeft.setPower(.25);
         try {
@@ -133,6 +133,9 @@ public class AutoCreator extends LinearOpMode {
                     (int) (sensorColor.green() * SCALE_FACTOR),
                     (int) (sensorColor.blue() * SCALE_FACTOR),
                     hsvValues);
+            telemetry.addData("Hue", hsvValues[0]);
+            telemetry.update();
+            
             // If the object is yellow
             if (hsvValues[0] < 65) {
                 //drive forward to push it off
