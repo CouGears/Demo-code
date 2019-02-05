@@ -27,15 +27,12 @@ import android.view.View;
 public class AutoCreator extends LinearOpMode {
     private DcMotor motorLeft;
     private DcMotor motorRight;
-    private DcMotor motorSide1;
-    private DcMotor motorSide2;
-    //private DigitalChannel digitalTouch;
-    private Blinker expansion_Hub_2;
+    private DcMotor motorSide;
+    //private Blinker expansion_Hub_2;
     private ColorSensor sensorColorRange;
-    private Servo servo;
-    private Servo servo2;
-    private Servo servoClaw1;
-    private Servo servoClaw2;
+    private Servo servoMarker;
+    private Servo servoHolder;
+    private Servo servo3;
     private ColorSensor sensorColor;
     private DistanceSensor sensorDistance;
     
@@ -44,19 +41,13 @@ public class AutoCreator extends LinearOpMode {
     public void runOpMode() {
         motorRight = hardwareMap.get(DcMotor.class, "motorRight");
         motorLeft = hardwareMap.get(DcMotor.class, "motorLeft");
-        motorSide1 = hardwareMap.get(DcMotor.class, "motorSide1");
-        motorSide2 = hardwareMap.get(DcMotor.class, "motorSide2");
-        //digitalTouch = hardwareMap.get(DigitalChannel.class, "digitalTouch");
-        expansion_Hub_2 = hardwareMap.get(Blinker.class, "Expansion Hub 2");
+        motorSide = hardwareMap.get(DcMotor.class, "motorSide");
+        //expansion_Hub_2 = hardwareMap.get(Blinker.class, "Expansion Hub 2");
         sensorColor = hardwareMap.get(ColorSensor.class, "sensorColorRange");
         sensorDistance = hardwareMap.get(DistanceSensor.class, "sensorColorRange");
-        servo = hardwareMap.get(Servo.class, "servo1");
-        servo2 = hardwareMap.get(Servo.class, "servo2");
-        servoClaw1 = hardwareMap.get(Servo.class, "servoClaw1");
-        servoClaw2 = hardwareMap.get(Servo.class, "servoClaw2");
-        
-        // set digital channel to input mode.
-        //digitalTouch.setMode(DigitalChannel.Mode.INPUT);
+        servoMarker = hardwareMap.get(Servo.class, "servoMarker");
+        servoHolder = hardwareMap.get(Servo.class, "servoHolder");
+        servo3 = hardwareMap.get(Servo.class, "servo3");
         telemetry.addData("Status", "Initialized");
         telemetry.update();
        
@@ -74,13 +65,8 @@ public class AutoCreator extends LinearOpMode {
         double tgtPower2 = 0;
         double tgtPowerArmBase = 0;
         double tgtPowerArmTop = 0;
-        double servoPos1 = 1;
-        double servoPos2 = 0.5;
-        double servoPosClaw1 = 1;
-        double servoPosClaw2 = 0.5;
         int x = 0;
         int times = 0;
-        servo.setPosition(.5);
         
         //Very important
         long speedVar = 0L;
@@ -88,35 +74,54 @@ public class AutoCreator extends LinearOpMode {
         //actual autonomous Code
         
         //Have the robot lower itself
-        motorSide1.setPower(.25);
-        motorSide1.setPower(-.25);
-        try {
-            Thread.sleep(3000);//change
+        motorSide.setPower(-.25);
+        try{
+            Thread.sleep(9000);
         }
         catch (InterruptedException e) {}
-        motorSide1.setPower(0);
-        motorSide1.setPower(0);
+        motorSide.setPower(0);
         
-        //drive toward block
-        while(hsvValues[0] < 100 && hsvValues[0] > 40){
-            motorRight.setPower(.25);
-            motorLeft.setPower(-.25);
-            speedVar++;
-            Color.RGBToHSV((int) (sensorColor.red() * SCALE_FACTOR),
-                    (int) (sensorColor.green() * SCALE_FACTOR),
-                    (int) (sensorColor.blue() * SCALE_FACTOR),
-                    hsvValues);
-            try {
-                Thread.sleep(1);
-            }
-            catch (InterruptedException e) {}
+        //move off of the hook
+        motorRight.setPower(-.25);
+        motorLeft.setPower(.25);
+        try {
+            Thread.sleep(750);
         }
-        //make the robot stop at block
+        catch (InterruptedException e) {}
+        
+        motorRight.setPower(.25);
+        motorLeft.setPower(.25);
+        try {
+            Thread.sleep(1700);
+        }
+        catch (InterruptedException e) {}
+        
+        //drive off block
+        motorRight.setPower(-.25);
+        motorLeft.setPower(.25);
+        try {
+            Thread.sleep(6250);
+        }
+        catch (InterruptedException e) {}
+        
+        motorRight.setPower(.25);
+        motorLeft.setPower(.25);
+        try {
+            Thread.sleep(750);
+        }
+        catch (InterruptedException e) {}
+        motorRight.setPower(-.25);
+        motorLeft.setPower(.25);
+        try {
+            Thread.sleep(200);//change
+        }
+        catch (InterruptedException e) {}
+        
         motorRight.setPower(0);
         motorLeft.setPower(0);
         
+        //sample
         int runs = 0;
-        
         for (int i = 0; i < 2; i++){
             //stop infront of block so we know it works
             try {
@@ -131,10 +136,10 @@ public class AutoCreator extends LinearOpMode {
             // If the object is yellow
             if (hsvValues[0] < 65) {
                 //drive forward to push it off
-                motorRight.setPower(.25);
-                motorLeft.setPower(-.25);
+                motorRight.setPower(-.25);
+                motorLeft.setPower(.25);
                 try {
-                    Thread.sleep(speedVar/5L);
+                    Thread.sleep(2000);
                 }
                 catch (InterruptedException e) {}
                 //stop
@@ -148,13 +153,10 @@ public class AutoCreator extends LinearOpMode {
             // If the first two objects are white
             else if (i == 1){
                 //back up
-                motorRight.setPower(-.25);
-                motorLeft.setPower(.25);
-                try {
-                    Thread.sleep(speedVar/2L);//change
-                }
-                catch (InterruptedException e) {}
-                
+                motorRight.setPower(.25);
+                motorLeft.setPower(-.25);
+                //add
+                /*
                 //turn 90 degrees
                 motorRight.setPower(-.25);
                 motorLeft.setPower(-.25);
@@ -190,19 +192,19 @@ public class AutoCreator extends LinearOpMode {
                 //stop
                 motorRight.setPower(0);
                 motorLeft.setPower(0);
-                runs = 3;
+                runs = 3;*/
             }
             
             // If the object is white
             else {
                 //back up
-                motorRight.setPower(-.25);
-                motorLeft.setPower(.25);
+                motorRight.setPower(.25);
+                motorLeft.setPower(-.25);
                 try {
-                    Thread.sleep(speedVar/2L);//change
+                    Thread.sleep(1500);//change
                 }
                 catch (InterruptedException e) {}
-                
+                /*
                 //turn 90 degrees
                 motorRight.setPower(-.25);
                 motorLeft.setPower(-.25);
@@ -229,16 +231,28 @@ public class AutoCreator extends LinearOpMode {
                 
                 //stop
                 motorRight.setPower(0);
-                motorLeft.setPower(0);
+                motorLeft.setPower(0);*/
             }
             
         }
+        /*
+        //park on the creator
+        motorRight.setPower(.52);
+        motorLeft.setPower(-.52);
+        try {
+            Thread.sleep(3200);//change
+        }
+        catch (InterruptedException e) {}
+        motorRight.setPower(0);
+        motorLeft.setPower(0);
+        
         
         //relativeLayout.post(new Runnable() {
             //public void run() {
                 //relativeLayout.setBackgroundColor(Color.WHITE);
             //}
-        //});   
+        //});
+        */
     }
 }
 
