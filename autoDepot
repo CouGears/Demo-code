@@ -27,15 +27,12 @@ import android.view.View;
 public class autoDepot extends LinearOpMode {
     private DcMotor motorLeft;
     private DcMotor motorRight;
-    private DcMotor motorSide1;
-    private DcMotor motorSide2;
-    //private DigitalChannel digitalTouch;
-    private Blinker expansion_Hub_2;
+    private DcMotor motorSide;
+    //private Blinker expansion_Hub_2;
     private ColorSensor sensorColorRange;
-    private Servo servo;
-    private Servo servo2;
-    private Servo servoClaw1;
-    private Servo servoClaw2;
+    private Servo servoMarker;
+    private Servo servoHolder;
+    private Servo servo3;
     private ColorSensor sensorColor;
     private DistanceSensor sensorDistance;
     
@@ -44,19 +41,13 @@ public class autoDepot extends LinearOpMode {
     public void runOpMode() {
         motorRight = hardwareMap.get(DcMotor.class, "motorRight");
         motorLeft = hardwareMap.get(DcMotor.class, "motorLeft");
-        motorSide1 = hardwareMap.get(DcMotor.class, "motorSide1");
-        motorSide2 = hardwareMap.get(DcMotor.class, "motorSide2");
-        //digitalTouch = hardwareMap.get(DigitalChannel.class, "digitalTouch");
-        expansion_Hub_2 = hardwareMap.get(Blinker.class, "Expansion Hub 2");
+        motorSide = hardwareMap.get(DcMotor.class, "motorSide");
+        //expansion_Hub_2 = hardwareMap.get(Blinker.class, "Expansion Hub 2");
         sensorColor = hardwareMap.get(ColorSensor.class, "sensorColorRange");
         sensorDistance = hardwareMap.get(DistanceSensor.class, "sensorColorRange");
-        servo = hardwareMap.get(Servo.class, "servo1");
-        servo2 = hardwareMap.get(Servo.class, "servo2");
-        servoClaw1 = hardwareMap.get(Servo.class, "servoClaw1");
-        servoClaw2 = hardwareMap.get(Servo.class, "servoClaw2");
-        
-        // set digital channel to input mode.
-        //digitalTouch.setMode(DigitalChannel.Mode.INPUT);
+        servoMarker = hardwareMap.get(Servo.class, "servoMarker");
+        servoHolder = hardwareMap.get(Servo.class, "servoHolder");
+        servo3 = hardwareMap.get(Servo.class, "servo3");
         telemetry.addData("Status", "Initialized");
         telemetry.update();
        
@@ -74,13 +65,8 @@ public class autoDepot extends LinearOpMode {
         double tgtPower2 = 0;
         double tgtPowerArmBase = 0;
         double tgtPowerArmTop = 0;
-        double servoPos1 = 1;
-        double servoPos2 = 0.5;
-        double servoPosClaw1 = 1;
-        double servoPosClaw2 = 0.5;
         int x = 0;
         int times = 0;
-        servo.setPosition(.5);
         
         //Very important
         long speedVar = 0L;
@@ -88,39 +74,61 @@ public class autoDepot extends LinearOpMode {
         //actual autonomous Code
         
         //Have the robot lower itself
-        motorSide1.setPower(.25);
-        motorSide1.setPower(-.25);
-        try {
-            Thread.sleep(3000);//change
+        motorSide.setPower(-.75);
+        try{
+            Thread.sleep(4000);
         }
         catch (InterruptedException e) {}
-        motorSide1.setPower(0);
-        motorSide1.setPower(0);
+        motorSide.setPower(0);
         
-        //drive toward block
-        while(hsvValues[0] < 100 && hsvValues[0] > 40){
-            motorRight.setPower(.25);
-            motorLeft.setPower(-.25);
-            speedVar++;
-            Color.RGBToHSV((int) (sensorColor.red() * SCALE_FACTOR),
-                    (int) (sensorColor.green() * SCALE_FACTOR),
-                    (int) (sensorColor.blue() * SCALE_FACTOR),
-                    hsvValues);
-            try {
-                Thread.sleep(1);
-            }
-            catch (InterruptedException e) {}
+        //move off of the hook
+        motorRight.setPower(-.5);
+        motorLeft.setPower(.5);
+        try {
+            Thread.sleep(375);
         }
-        //make the robot stop at block
+        catch (InterruptedException e) {}
+        
+        motorRight.setPower(.5);
+        motorLeft.setPower(.5);
+        motorSide.setPower(.5);
+        try {
+            Thread.sleep(800);
+        }
+        catch (InterruptedException e) {}
+        
+        //drive to block
+        motorRight.setPower(-.5);
+        motorLeft.setPower(.5);
+        servoMarker.setPosition(.5);
+        try {
+            Thread.sleep(2750);
+        }
+        catch (InterruptedException e) {}
+        
+        motorSide.setPower(0);
+        motorRight.setPower(.5);
+        motorLeft.setPower(.5);
+        try {
+            Thread.sleep(400);
+        }
+        catch (InterruptedException e) {}
+        motorRight.setPower(-.5);
+        motorLeft.setPower(.5);
+        try {
+            Thread.sleep(100);
+        }
+        catch (InterruptedException e) {}
+        
         motorRight.setPower(0);
         motorLeft.setPower(0);
         
+        //sample
         int runs = 0;
-        
         for (int i = 0; i < 2; i++){
-            //stop infront of block so we know it works
+            //stop in front of block so we know it works
             try {
-                Thread.sleep(1000);
+                Thread.sleep(500);
             }
             catch (InterruptedException e) {}
             
@@ -128,13 +136,16 @@ public class autoDepot extends LinearOpMode {
                     (int) (sensorColor.green() * SCALE_FACTOR),
                     (int) (sensorColor.blue() * SCALE_FACTOR),
                     hsvValues);
+            telemetry.addData("Hue", hsvValues[0]);
+            telemetry.update();
+            
             // If the object is yellow
             if (hsvValues[0] < 65) {
                 //drive forward to push it off
-                motorRight.setPower(.25);
-                motorLeft.setPower(-.25);
+                motorRight.setPower(-.5);
+                motorLeft.setPower(.5);
                 try {
-                    Thread.sleep(speedVar/5L);
+                    Thread.sleep(1000);
                 }
                 catch (InterruptedException e) {}
                 //stop
@@ -148,42 +159,49 @@ public class autoDepot extends LinearOpMode {
             // If the first two objects are white
             else if (i == 1){
                 //back up
-                motorRight.setPower(-.25);
-                motorLeft.setPower(.25);
+                motorRight.setPower(.5);
+                motorLeft.setPower(-.5);
                 try {
-                    Thread.sleep(speedVar/2L);//change
+                    Thread.sleep(1000);//change
                 }
                 catch (InterruptedException e) {}
                 
                 //turn 90 degrees
-                motorRight.setPower(-.25);
-                motorLeft.setPower(-.25);
+                motorRight.setPower(.5);
+                motorLeft.setPower(.5);
                 try {
-                    Thread.sleep(speedVar/4L);//change
+                    Thread.sleep(1000);//change
                 }
                 catch (InterruptedException e) {}
                 
-                //move forward a bit
-                motorRight.setPower(.25);
-                motorLeft.setPower(-.25);
+                //move forward
+                motorRight.setPower(-.5);
+                motorLeft.setPower(.5);
                 try {
-                    Thread.sleep(speedVar/8L);
+                    Thread.sleep(1500);
                 }
                 catch (InterruptedException e) {}
                 
-                //arc to the block
-                motorRight.setPower(.5);//change
-                motorLeft.setPower(-.1);//change
+                //drive to the block
+                motorRight.setPower(-.5);
+                motorLeft.setPower(-.5);
                 try {
-                    Thread.sleep(speedVar/5L*11L);//change
+                    Thread.sleep(1000);
+                }
+                catch (InterruptedException e) {}
+                
+                motorRight.setPower(-.5);
+                motorLeft.setPower(.5);
+                try {
+                    Thread.sleep(750);
                 }
                 catch (InterruptedException e) {}
                 
                 //push the block off
-                motorRight.setPower(.25);
-                motorLeft.setPower(-.25);
+                motorRight.setPower(-.5);
+                motorLeft.setPower(.5);
                 try {
-                    Thread.sleep(speedVar/5L);
+                    Thread.sleep(1000);
                 }
                 catch (InterruptedException e) {}
                 
@@ -196,34 +214,41 @@ public class autoDepot extends LinearOpMode {
             // If the object is white
             else {
                 //back up
-                motorRight.setPower(-.25);
-                motorLeft.setPower(.25);
+                motorRight.setPower(.5);
+                motorLeft.setPower(-.5);
                 try {
-                    Thread.sleep(speedVar/2L);//change
+                    Thread.sleep(1000);
                 }
                 catch (InterruptedException e) {}
                 
                 //turn 90 degrees
-                motorRight.setPower(-.25);
-                motorLeft.setPower(-.25);
+                motorRight.setPower(.5);
+                motorLeft.setPower(.5);
                 try {
-                    Thread.sleep(speedVar/4L);//change
+                    Thread.sleep(1000);
                 }
                 catch (InterruptedException e) {}
                 
-                //move forward a bit
-                motorRight.setPower(.25);
-                motorLeft.setPower(-.25);
+                //move forward
+                motorRight.setPower(-.5);
+                motorLeft.setPower(.5);
                 try {
-                    Thread.sleep(speedVar/8L);
+                    Thread.sleep(1500);
                 }
                 catch (InterruptedException e) {}
                 
-                //arc to the block
-                motorRight.setPower(.5);//change
-                motorLeft.setPower(-.1);//change
+                //drive to the block
+                motorRight.setPower(-.5);
+                motorLeft.setPower(-.5);
                 try {
-                    Thread.sleep(speedVar/5L*11L);//change
+                    Thread.sleep(1000);
+                }
+                catch (InterruptedException e) {}
+                
+                motorRight.setPower(-.5);
+                motorLeft.setPower(.5);
+                try {
+                    Thread.sleep(750);
                 }
                 catch (InterruptedException e) {}
                 
@@ -231,27 +256,54 @@ public class autoDepot extends LinearOpMode {
                 motorRight.setPower(0);
                 motorLeft.setPower(0);
             }
-            
         }
-        
-        //Go to the depot
-        /*if (runs == 1) {
-            
-            
+        //drop off marker in depot
+        if (runs == 1) {
+            motorRight.setPower(.5);
+            motorLeft.setPower(.5);
+            try {
+                Thread.sleep(300);//change
+            }
+            catch (InterruptedException e) {}
+            motorRight.setPower(-.5);
+            motorLeft.setPower(.5);
+            try {
+                Thread.sleep(2000);//change
+            }
+            catch (InterruptedException e) {}
+            servoHolder.setPosition(0);
+            motorRight.setPower(0);
+            motorLeft.setPower(0);
         }
         
         else if (runs == 2) {
-            
+            motorRight.setPower(-.5);
+            motorLeft.setPower(.5);
+            try {
+                Thread.sleep(2000);//change
+            }
+            catch (InterruptedException e) {}
+            servoHolder.setPosition(0);
+            motorRight.setPower(0);
+            motorLeft.setPower(0);
         }
         
         else {
-            
-        }*/
-        //relativeLayout.post(new Runnable() {
-            //public void run() {
-                //relativeLayout.setBackgroundColor(Color.WHITE);
-            //}
-        //});   
+            motorRight.setPower(-.5);
+            motorLeft.setPower(-.5);
+            try {
+                Thread.sleep(300);//change
+            }
+            catch (InterruptedException e) {}
+            motorRight.setPower(-.5);
+            motorLeft.setPower(.5);
+            try {
+                Thread.sleep(2000);//change
+            }
+            catch (InterruptedException e) {}
+            servoHolder.setPosition(0);
+            motorRight.setPower(0);
+            motorLeft.setPower(0);
+        }
     }
 }
-
