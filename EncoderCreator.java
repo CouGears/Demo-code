@@ -39,7 +39,7 @@ public class EncoderCreator extends LinearOpMode {
     
     public void motors (String motor, int distance, double speed) {
         if (motor.equals("arm")) {
-            while (motorLeft.getCurrentPosition() != distance) {
+            while (motorSide.getCurrentPosition() != distance) {
                 motorSide.setTargetPosition(distance);
                 motorSide.setPower(speed);
             }
