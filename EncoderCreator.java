@@ -36,30 +36,42 @@ public class EncoderCreator extends LinearOpMode {
     private Servo servo3;
     private ColorSensor sensorColor;
     private DistanceSensor sensorDistance;
+    int currentSide = 0;
+    int current = 0;
     
     public void motors (String motor, int distance, double speed) {
         if (motor.equals("arm")) {
-            while (motorSide.getCurrentPosition() != distance) {
-                motorSide.setTargetPosition(distance);
-                motorSide.setPower(speed);
+            motorSide.setTargetPosition(current + distance);
+            motorSide.setPower(speed);
+            
+            while ((motorSide.getCurrentPosition() != distance + current) && opModeIsActive()) {
             }
+            
+            current = motorSide.getCurrentPosition();
         }
         
         else if (motor.equals("drive")) {
-            while (motorLeft.getCurrentPosition() != distance) {
-                motorLeft.setTargetPosition(distance);
-                motorLeft.setPower(speed);
-                motorRight.setTargetPosition(-distance);
-                motorRight.setPower(-speed);
+            motorLeft.setTargetPosition(current + distance);
+            motorLeft.setPower(speed);
+            motorRight.setTargetPosition(current - distance);
+            motorRight.setPower(-speed);
+            
+            while ((motorLeft.getCurrentPosition() != distance + current) && opModeIsActive()) {
             }
+            
+            current = motorLeft.getCurrentPosition();
         }
+        
         else if (motor.equals("turn")) {
-            while (motorLeft.getCurrentPosition() != distance) {
-                motorLeft.setTargetPosition(distance);
-                motorLeft.setPower(speed);
-                motorRight.setTargetPosition(distance);
-                motorRight.setPower(speed);
+            motorLeft.setTargetPosition(current + distance);
+            motorLeft.setPower(speed);
+            motorRight.setTargetPosition(current + distance);
+            motorRight.setPower(speed);
+            
+            while ((motorLeft.getCurrentPosition() != distance + current) && opModeIsActive()) {
             }
+            
+            current = motorLeft.getCurrentPosition();
         }
     }
     
@@ -97,52 +109,19 @@ public class EncoderCreator extends LinearOpMode {
         int times = 0;
         
         //actual autonomous Code
-        while(opModeIsActive()) {
-            
-            telemetry.addData("Encoder Left Value", motorLeft.getCurrentPosition());
-            telemetry.addData("Encoder Right Value", motorRight.getCurrentPosition());
-            telemetry.addData("Encoder Up/Down Value", motorSide.getCurrentPosition());
-            telemetry.update();
-            
-            
+        while (opModeIsActive()) {
             //Have the robot lower itself
-            motors("arm", -5000, .5);
-            
-            telemetry.addData("Encoder Left Value", motorLeft.getCurrentPosition());
-            telemetry.addData("Encoder Right Value", motorRight.getCurrentPosition());
-            telemetry.addData("Encoder Up/Down Value", motorSide.getCurrentPosition());
-            telemetry.update();
-            //motorSide.setPower(0);
-            //motorLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            
+            motors("arm", -8500, 1);
             
             //move off of the hook
-            
-            motors("drive", 5000, .5);
-            /*
-            try {
-                Thread.sleep(375);
-            }
-            catch (InterruptedException e) {}
-            
-            motorRight.setPower(.5);
-            motorLeft.setPower(.5);
-            motorSide.setPower(.5);
-            try {
-                Thread.sleep(800);
-            }
-            catch (InterruptedException e) {}
+            motors("drive", 600, .5);
+            motors("turn", 200, .5);
+            motors("drive", 200, .5);
+            motors("turn", 600, .5);
             
             //drive to block
-            motorRight.setPower(-.5);
-            motorLeft.setPower(.5);
-            servoMarker.setPosition(.5);
-            try {
-                Thread.sleep(2750);
-            }
-            catch (InterruptedException e) {}
-            
-            motorSide.setPower(0);
+            motors("drive", 3000, .5);
+            /*
             motorRight.setPower(.5);
             motorLeft.setPower(.5);
             try {
